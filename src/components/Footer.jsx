@@ -121,7 +121,7 @@ const Footer = () => {
             © 2024 IdeaQLabs. All rights reserved.
           </p>
           <p className="text-slate-400 text-sm mt-4 md:mt-0">
-            with ❤️ by the IdeaQLabs team
+            Made with ❤️ by the IdeaQLabs team
           </p>
         </motion.div>
       </div>
