@@ -213,7 +213,7 @@ const Contact = () => {
                  src="https://images.unsplash.com/photo-1701383287245-5c4096b68564" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
-                  <p className="font-semibold">TechVision Solutions HQ</p>
+                  <p className="font-semibold">IdeaQLabs</p>
                   <p className="text-sm text-slate-300">123 Innovation Drive, Tech Valley</p>
                 </div>
               </div>
