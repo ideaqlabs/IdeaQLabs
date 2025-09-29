@@ -39,10 +39,10 @@ const About = () => {
           transition={{ duration: 0.8 }}
         >
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            About <span className="gradient-text">TechVision</span>
+            About <span className="gradient-text">IdeaQLabs</span>
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-            We're a passionate team of innovators, creators, and problem-solvers dedicated to building the future of technology.
+            We're a passionate team of innovators, creators and problem-solvers dedicated to building the future of technology.
           </p>
         </motion.div>
 
@@ -60,10 +60,10 @@ const About = () => {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <p className="text-lg text-slate-300 mb-6">
-                  Founded in 2018, TechVision Solutions emerged from a simple belief: technology should empower, not complicate. Our journey began in a small garage with three passionate developers who shared a vision of creating software that truly makes a difference.
+                  Founded in 2025, IdeaQLabs emerged from a simple belief: technology should empower, not complicate. Our journey began in a small home with two passionate developers who shared a vision of creating software that truly makes a difference.
                 </p>
                 <p className="text-lg text-slate-300">
-                  Today, we've grown into a dynamic team of 50+ professionals, but our core values remain unchanged. We believe in innovation, quality, and the transformative power of well-crafted software solutions.
+                  Today, we've grown into a dynamic team of 20+ professionals, but our core values remain unchanged. We believe in innovation, quality, and the transformative power of well-crafted software solutions.
                 </p>
               </div>
               <div className="relative">
