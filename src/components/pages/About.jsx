@@ -4,22 +4,22 @@ import { Users, Award, Globe, Heart } from 'lucide-react';
 
 const About = () => {
   const stats = [
-    { icon: <Users className="h-8 w-8" />, number: "50+", label: "Expert Developers" },
-    { icon: <Award className="h-8 w-8" />, number: "200+", label: "Projects Completed" },
-    { icon: <Globe className="h-8 w-8" />, number: "25+", label: "Countries Served" },
+    { icon: <Users className="h-8 w-8" />, number: "20+", label: "Expert Developers" },
+    { icon: <Award className="h-8 w-8" />, number: "50+", label: "Projects Completed" },
+    { icon: <Globe className="h-8 w-8" />, number: "15+", label: "Countries Served" },
     { icon: <Heart className="h-8 w-8" />, number: "98%", label: "Client Satisfaction" }
   ];
 
   const team = [
     {
-      name: "Sarah Johnson",
+      name: "Ishan",
       role: "CEO & Founder",
-      description: "Visionary leader with 15+ years in tech innovation"
+      description: "Young Entrepreneur with a vision to create disruption in web3.0 technologies"
     },
     {
-      name: "Michael Chen",
-      role: "CTO",
-      description: "Full-stack architect specializing in scalable solutions"
+      name: "Deep",
+      role: "CTO & Co-Founder",
+      description: "Visionary leader with 15+ years in tech innovation"
     },
     {
       name: "Emily Rodriguez",
@@ -60,10 +60,10 @@ const About = () => {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <p className="text-lg text-slate-300 mb-6">
-                  Founded in 2025, IdeaQLabs emerged from a simple belief: technology should empower, not complicate. Our journey began in a small home with two passionate developers who shared a vision of creating software that truly makes a difference.
+                  Founded in 2025, IdeaQLabs emerges from a simple belief: Technology should empower, not complicate. Our journey began in a small home with two passionate developers who shared a vision of creating software that truly makes a difference.
                 </p>
                 <p className="text-lg text-slate-300">
-                  Today, we've grown into a dynamic team of 20+ professionals, but our core values remain unchanged. We believe in innovation, quality, and the transformative power of well-crafted software solutions.
+                  Today, we've grown into a dynamic team of 20+ professionals, but our core values remain unchanged. We believe in innovation, quality and the transformative power of well-crafted software solutions.
                 </p>
               </div>
               <div className="relative">
