@@ -35,8 +35,8 @@ function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>TechVision Solutions - Innovative Software Development</title>
-        <meta name="description" content="Leading software company specializing in innovative solutions, cutting-edge products, and transformative technology experiences." />
+        <title>IdeaQLabs - Innovative Web3.0 Development</title>
+        <meta name="description" content="Leading software company specializing in innovative solutions, cutting-edge products and transformative technology experiences." />
       </Helmet>
       
       <Header 
