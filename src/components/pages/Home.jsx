@@ -98,7 +98,7 @@ const Home = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Why Choose <span className="gradient-text">TechVision</span>?
+            Why Choose <span className="gradient-text">IdeaQLabs</span>?
           </motion.h2>
 
           <div className="grid md:grid-cols-3 gap-8">
