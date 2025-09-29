@@ -44,7 +44,7 @@ const Footer = () => {
         }} transition={{
           duration: 0.6
         }}>
-            <span className="text-2xl font-bold gradient-text mb-4 block">TechVision Solutions</span>
+            <span className="text-2xl font-bold gradient-text mb-4 block">IdeaQLabs</span>
             <p className="text-slate-300 mb-6 max-w-md">
               Transforming ideas into powerful digital experiences with cutting-edge technology and creative excellence. Building the future, one solution at a time.
             </p>
@@ -121,7 +121,7 @@ const Footer = () => {
             © 2024 IdeaQLabs. All rights reserved.
           </p>
           <p className="text-slate-400 text-sm mt-4 md:mt-0">
-            Made with ❤️ by the IdeaQLabs team
+            with ❤️ by the IdeaQLabs team
           </p>
         </motion.div>
       </div>
