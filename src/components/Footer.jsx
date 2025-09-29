@@ -118,10 +118,10 @@ const Footer = () => {
         delay: 0.6
       }}>
           <p className="text-slate-400 text-sm">
-            © 2024 TechVision Solutions. All rights reserved.
+            © 2024 IdeaQLabs. All rights reserved.
           </p>
           <p className="text-slate-400 text-sm mt-4 md:mt-0">
-            Made with ❤️ by the TechVision team
+            Made with ❤️ by the IdeaQLabs team
           </p>
         </motion.div>
       </div>
