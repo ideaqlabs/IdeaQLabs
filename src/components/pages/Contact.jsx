@@ -17,20 +17,20 @@ const Contact = () => {
     {
       icon: <Mail className="h-6 w-6" />,
       title: "Email Us",
-      details: "hello@techvision.com",
-      subDetails: "support@techvision.com"
+      details: "support@ideaqlabs.com",
+      subDetails: "support@ideaqlabs.com"
     },
     {
       icon: <Phone className="h-6 w-6" />,
       title: "Call Us",
-      details: "+1 (555) 123-4567",
-      subDetails: "+1 (555) 987-6543"
+      details: "+91 765 880 7077",
+      subDetails: "+91 765 880 7077"
     },
     {
       icon: <MapPin className="h-6 w-6" />,
       title: "Visit Us",
       details: "123 Innovation Drive",
-      subDetails: "Tech Valley, CA 94025"
+      subDetails: "IdeaQ Valley, PB 94025"
     },
     {
       icon: <Clock className="h-6 w-6" />,
@@ -209,12 +209,12 @@ const Contact = () => {
               <div className="relative h-64 bg-slate-800/50 rounded-lg overflow-hidden">
                 <img 
                   className="w-full h-full object-cover" 
-                  alt="TechVision Solutions office location map"
+                  alt="IdeaQLabs office location map"
                  src="https://images.unsplash.com/photo-1701383287245-5c4096b68564" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 text-white">
                   <p className="font-semibold">IdeaQLabs</p>
-                  <p className="text-sm text-slate-300">123 Innovation Drive, Tech Valley</p>
+                  <p className="text-sm text-slate-300">123 Innovation Drive, IdeaQ Valley</p>
                 </div>
               </div>
             </motion.div>
