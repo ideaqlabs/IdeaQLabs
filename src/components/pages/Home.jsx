@@ -41,7 +41,7 @@ const Home = () => {
             transition={{ duration: 0.8 }}
           >
             <span className="text-white">Innovative</span>{' '}
-            <span className="gradient-text">Software</span>{' '}
+            <span className="gradient-text">Web3.0</span>{' '}
             <span className="text-yellow-400">Solutions</span>
           </motion.h1>
           
