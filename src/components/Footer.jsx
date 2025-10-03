@@ -10,7 +10,7 @@ const Footer = () => {
   }, {
     icon: <Twitter className="h-5 w-5" />,
     name: 'Twitter',
-    url: '#'
+    url: 'https://x.com/IdeaQLabs'
   }, {
     icon: <Linkedin className="h-5 w-5" />,
     name: 'LinkedIn',
