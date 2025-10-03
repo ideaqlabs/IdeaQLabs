@@ -9,7 +9,7 @@
   --secondary-green: #203a43;
   --accent-green: #2c5364;
   --sky-blue: #38bdf8;
-  --bright-yellow: #C6D870;
+  --bright-yellow: #fbbf24;
   --soft-white: #f8fafc;
 }
 
@@ -27,7 +27,7 @@ body {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, #38bdf8, #C6D870);
+  background: linear-gradient(135deg, #38bdf8, #fbbf24);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
