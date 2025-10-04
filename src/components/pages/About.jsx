@@ -126,7 +126,7 @@ const About = () => {
                 <img 
                   className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-sky-400" 
                   alt={`${member.name} - ${member.role}`}
-                 src="https://github.com/ideaqlabs/IdeaQLabs/blob/main/src/Ishan.jpeg" />
+                 src="main/src/Ishan.jpeg" />
                 <h3 className="text-2xl font-semibold text-white mb-2">{member.name}</h3>
                 <p className="text-yellow-400 font-medium mb-4">{member.role}</p>
                 <p className="text-slate-300">{member.description}</p>
