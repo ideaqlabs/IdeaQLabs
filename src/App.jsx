@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { motion, AnimatePresence } from 'framer-motion';
 import Header from '@/components/Header';
@@ -10,10 +10,28 @@ import Contact from '@/components/pages/Contact';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
 import { Toaster } from '@/components/ui/toaster';
+import { supabase } from '@/lib/supabaseClient'; // Make sure you have supabaseClient.js
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [user, setUser] = useState(null); // Track logged-in user
+
+  // Check session and listen for auth state changes
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) setUser(session.user);
+    };
+    checkSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Clean up listener on unmount
+    return () => listener.subscription.unsubscribe();
+  }, []);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -36,15 +54,20 @@ function App() {
     <div className="min-h-screen flex flex-col">
       <Helmet>
         <title>IdeaQLabs - Innovative Web3.0 Development</title>
-        <meta name="description" content="Leading software company specializing in innovative solutions, cutting-edge products and transformative technology experiences." />
+        <meta
+          name="description"
+          content="Leading software company specializing in innovative solutions, cutting-edge products and transformative technology experiences."
+        />
       </Helmet>
-      
-      <Header 
-        currentPage={currentPage} 
+
+      <Header
+        currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         onAuthClick={() => setIsAuthModalOpen(true)}
+        user={user} // Pass user to Header
+        setUser={setUser} // Optional: pass setter for sign out
       />
-      
+
       <main className="flex-1">
         <AnimatePresence mode="wait">
           <motion.div
@@ -58,14 +81,15 @@ function App() {
           </motion.div>
         </AnimatePresence>
       </main>
-      
+
       <Footer />
-      
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        setUser={setUser} // Allow AuthModal to update user after login
       />
-      
+
       <Toaster />
     </div>
   );
