@@ -14,7 +14,7 @@ const About = () => {
     {
       name: "Ishan",
       role: "CEO & Founder",
-      description: "Young Entrepreneur with a vision to create disruption in web3.0 technologies"
+      description: "Young entrepreneur with a vision to create disruption in web3.0 technologies"
     },
     {
       name: "Deep",
@@ -60,10 +60,10 @@ const About = () => {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <p className="text-lg text-slate-300 mb-6">
-                  Founded in 2025, IdeaQLabs emerges from a simple belief: Technology should empower, not complicate. Our journey began in a small home with two passionate developers who shared a vision of creating software that truly makes a difference.
+                  Founded in 2025, IdeaQLabs emerges from a simple belief: Technology should empower, not complicate. Our journey began in a small room with two passionate developers who shared a vision of creating software that truly makes a difference.
                 </p>
                 <p className="text-lg text-slate-300">
-                  Today, we've grown into a dynamic team of 20+ professionals, but our core values remain unchanged. We believe in innovation, quality and the transformative power of well-crafted software solutions.
+                  Today, we've grown into a dynamic team of 10+ professionals, but our core values remain unchanged. We believe in innovation, quality and the transformative power of well-crafted software solutions.
                 </p>
               </div>
               <div className="relative">
