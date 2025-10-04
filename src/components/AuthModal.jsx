@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
-import { supabase } from '@/lib/supabaseClient';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Mail, Lock, User, Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/lib/supabaseClient"; // Make sure this exists
 
 const AuthModal = ({ isOpen, onClose, setUser }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
-  const handleInputChange = e => {
+  const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
+  const resetForm = () => {
+    setFormData({ name: "", email: "", password: "", confirmPassword: "" });
+    setShowPassword(false);
+  };
+
+  const switchMode = () => {
+    setIsLogin(!isLogin);
+    resetForm();
+  };
+
+  const handleEmailAuth = async (e) => {
     e.preventDefault();
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
@@ -28,47 +38,43 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
     }
 
     try {
+      let authResponse;
+
       if (isLogin) {
-        // Sign in with email
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: formData.email,
-          password: formData.password
-        });
-        if (error) throw error;
-        setUser(data.user);
-      } else {
-        // Sign up
-        const { data, error } = await supabase.auth.signUp({
+        authResponse = await supabase.auth.signInWithPassword({
           email: formData.email,
           password: formData.password,
-          options: {
-            data: { full_name: formData.name }
-          }
         });
-        if (error) throw error;
-        toast({ title: "Check your email to confirm signup!" });
-        onClose();
+      } else {
+        authResponse = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: { data: { full_name: formData.name } },
+        });
       }
+
+      if (authResponse.error) throw authResponse.error;
+
+      setUser(authResponse.data.user || authResponse.data.session.user);
+      resetForm();
+      onClose();
     } catch (error) {
+      console.error(error);
       toast({ title: error.message });
     }
   };
 
   const handleGoogleAuth = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin }
-    });
-  };
-
-  const resetForm = () => {
-    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
-    setShowPassword(false);
-  };
-
-  const switchMode = () => {
-    setIsLogin(!isLogin);
-    resetForm();
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: window.location.origin },
+      });
+      if (error) throw error;
+    } catch (error) {
+      console.error(error);
+      toast({ title: error.message });
+    }
   };
 
   if (!isOpen) return null;
@@ -87,12 +93,12 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.8, opacity: 0 }}
-          onClick={e => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <h2 className="text-2xl font-bold text-white">
-              {isLogin ? 'Welcome Back' : 'Create Account'}
+              {isLogin ? "Welcome Back" : "Create Account"}
             </h2>
             <button
               onClick={onClose}
@@ -103,10 +109,12 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleEmailAuth} className="space-y-6">
             {!isLogin && (
               <div>
-                <label className="block text-slate-300 mb-2 font-medium">Full Name</label>
+                <label className="block text-slate-300 mb-2 font-medium">
+                  Full Name
+                </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
@@ -123,7 +131,9 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
             )}
 
             <div>
-              <label className="block text-slate-300 mb-2 font-medium">Email</label>
+              <label className="block text-slate-300 mb-2 font-medium">
+                Email
+              </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input
@@ -139,11 +149,13 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
             </div>
 
             <div>
-              <label className="block text-slate-300 mb-2 font-medium">Password</label>
+              <label className="block text-slate-300 mb-2 font-medium">
+                Password
+              </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -163,11 +175,13 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
 
             {!isLogin && (
               <div>
-                <label className="block text-slate-300 mb-2 font-medium">Confirm Password</label>
+                <label className="block text-slate-300 mb-2 font-medium">
+                  Confirm Password
+                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
-                    type={showPassword ? 'text' : 'password'}
+                    type={showPassword ? "text" : "password"}
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
@@ -183,7 +197,7 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
               type="submit"
               className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold py-3 text-lg hover-glow"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {isLogin ? "Sign In" : "Create Account"}
             </Button>
           </form>
 
@@ -217,7 +231,7 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
               onClick={switchMode}
               className="text-sky-400 hover:text-sky-300 font-medium transition-colors"
             >
-              {isLogin ? 'Sign up' : 'Sign in'}
+              {isLogin ? "Sign up" : "Sign in"}
             </button>
           </div>
         </motion.div>
