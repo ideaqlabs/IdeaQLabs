@@ -10,28 +10,44 @@ import Contact from '@/components/pages/Contact';
 import Footer from '@/components/Footer';
 import AuthModal from '@/components/AuthModal';
 import { Toaster } from '@/components/ui/toaster';
-import { supabase } from '@/lib/supabaseClient'; // Make sure you have supabaseClient.js
+import { supabase } from '@/lib/supabaseClient'; // Make sure you have a proper supabase client setup
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [user, setUser] = useState(null); // Track logged-in user
+  const [user, setUser] = useState(null);
 
-  // Check session and listen for auth state changes
+  // Check session on mount
   useEffect(() => {
-    const checkSession = async () => {
+    const getSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) setUser(session.user);
     };
-    checkSession();
+    getSession();
 
+    // Handle OAuth redirect (Google sign-in)
+    const handleOAuthRedirect = async () => {
+      const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+      if (data.session) setUser(data.session.user);
+    };
+    handleOAuthRedirect();
+
+    // Listen to auth changes (sign-in/sign-out)
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      if (session) setUser(session.user);
+      else setUser(null);
     });
 
-    // Clean up listener on unmount
-    return () => listener.subscription.unsubscribe();
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setCurrentPage('home');
+  };
 
   const renderPage = () => {
     switch (currentPage) {
@@ -64,8 +80,8 @@ function App() {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         onAuthClick={() => setIsAuthModalOpen(true)}
-        user={user} // Pass user to Header
-        setUser={setUser} // Optional: pass setter for sign out
+        user={user}               // Pass user to header for sign-out button
+        onSignOut={handleSignOut} // Pass sign-out function
       />
 
       <main className="flex-1">
@@ -87,7 +103,7 @@ function App() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        setUser={setUser} // Allow AuthModal to update user after login
+        setUser={setUser} // Allow AuthModal to update user state after sign-in
       />
 
       <Toaster />
@@ -96,3 +112,4 @@ function App() {
 }
 
 export default App;
+
