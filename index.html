@@ -8,9 +8,6 @@
 		<title>IdeaQLabs</title>
 	</head>
 	<body>
-		<div id="root"></div>
-		<script type="module" src="/src/main.jsx"></script>
-	
 		// Import the functions you need from the SDKs you need
 		import { initializeApp } from "firebase/app";
 		import { getAnalytics } from "firebase/analytics";
@@ -20,18 +17,20 @@
 		// Your web app's Firebase configuration
 		// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 		const firebaseConfig = {
-  		apiKey: "AIzaSyCO-x2SpE3J4o-anbK10tz537uYmE4xv2w",
-  		authDomain: "ideaqlabs-1c92e.firebaseapp.com",
-  		projectId: "ideaqlabs-1c92e",
-  		storageBucket: "ideaqlabs-1c92e.firebasestorage.app",
-  		messagingSenderId: "737129709253",
-  		appId: "1:737129709253:web:cb43fa5b8a64f9f773faac",
-  		measurementId: "G-60BWBPZE5D"
+  			apiKey: "AIzaSyCO-x2SpE3J4o-anbK10tz537uYmE4xv2w",
+  			authDomain: "ideaqlabs-1c92e.firebaseapp.com",
+  			projectId: "ideaqlabs-1c92e",
+  			storageBucket: "ideaqlabs-1c92e.firebasestorage.app",
+  			messagingSenderId: "737129709253",
+  			appId: "1:737129709253:web:cb43fa5b8a64f9f773faac",
+  			measurementId: "G-60BWBPZE5D"
 		};
 
 		// Initialize Firebase
 		const app = initializeApp(firebaseConfig);
 		const analytics = getAnalytics(app);
-	
+
+		<div id="root"></div>
+		<script type="module" src="/src/main.jsx"></script>
 	</body>
 </html>
