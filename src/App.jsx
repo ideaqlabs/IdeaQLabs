@@ -1,65 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import { motion, AnimatePresence } from 'framer-motion';
-import Header from '@/components/Header';
-import Home from '@/components/pages/Home';
-import About from '@/components/pages/About';
-import Vision from '@/components/pages/Vision';
-import Products from '@/components/pages/Products';
-import Contact from '@/components/pages/Contact';
-import Footer from '@/components/Footer';
-import AuthModal from '@/components/AuthModal';
-import { Toaster } from '@/components/ui/toaster';
-import { supabase } from '@/lib/supabaseClient'; // Make sure you have a proper supabase client setup
+import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
+import { motion, AnimatePresence } from "framer-motion";
+import Header from "@/components/Header";
+import Home from "@/components/pages/Home";
+import About from "@/components/pages/About";
+import Vision from "@/components/pages/Vision";
+import Products from "@/components/pages/Products";
+import Contact from "@/components/pages/Contact";
+import Footer from "@/components/Footer";
+import AuthModal from "@/components/AuthModal";
+import { Toaster } from "@/components/ui/toaster";
+import { supabase } from "@/lib/supabaseClient"; // Make sure this exists
 
 function App() {
-  const [currentPage, setCurrentPage] = useState('home');
+  const [currentPage, setCurrentPage] = useState("home");
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Check session on mount
+  // Check current session on mount
   useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) setUser(session.user);
-    };
-    getSession();
-
-    // Handle OAuth redirect (Google sign-in)
-    const handleOAuthRedirect = async () => {
-      const { data, error } = await supabase.auth.getSessionFromUrl({ storeSession: true });
+    const fetchSession = async () => {
+      const { data } = await supabase.auth.getSession();
       if (data.session) setUser(data.session.user);
     };
-    handleOAuthRedirect();
 
-    // Listen to auth changes (sign-in/sign-out)
+    fetchSession();
+
+    // Listen to auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) setUser(session.user);
-      else setUser(null);
+      setUser(session?.user || null);
     });
 
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    return () => listener.subscription.unsubscribe();
   }, []);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    setCurrentPage('home');
+    window.history.replaceState({}, document.title, "/"); // Remove any #access_token
   };
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'home':
+      case "home":
         return <Home />;
-      case 'about':
+      case "about":
         return <About />;
-      case 'vision':
+      case "vision":
         return <Vision />;
-      case 'products':
+      case "products":
         return <Products />;
-      case 'contact':
+      case "contact":
         return <Contact />;
       default:
         return <Home />;
@@ -80,8 +71,8 @@ function App() {
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         onAuthClick={() => setIsAuthModalOpen(true)}
-        user={user}               // Pass user to header for sign-out button
-        onSignOut={handleSignOut} // Pass sign-out function
+        user={user}
+        onSignOut={handleSignOut}
       />
 
       <main className="flex-1">
@@ -103,7 +94,7 @@ function App() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        setUser={setUser} // Allow AuthModal to update user state after sign-in
+        setUser={setUser} // Pass setter for AuthModal to update App state
       />
 
       <Toaster />
@@ -112,4 +103,5 @@ function App() {
 }
 
 export default App;
+
 
