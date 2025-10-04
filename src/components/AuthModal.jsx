@@ -5,10 +5,9 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/lib/supabaseClient';
 
-const AuthModal = ({ isOpen, onClose }) => {
+const AuthModal = ({ isOpen, onClose, setUser }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,71 +15,54 @@ const AuthModal = ({ isOpen, onClose }) => {
     confirmPassword: ''
   });
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleInputChange = e => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    setLoading(true);
 
-    const { email, password, name, confirmPassword } = formData;
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      toast({ title: "Passwords do not match!" });
+      return;
+    }
 
     try {
-      if (!isLogin && password !== confirmPassword) {
-        toast({ title: '⚠️ Passwords do not match' });
-        setLoading(false);
-        return;
-      }
-
       if (isLogin) {
-        // 🟢 Sign In
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        // Sign in with email
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password
+        });
         if (error) throw error;
-        toast({ title: '✅ Signed in successfully!' });
+        setUser(data.user);
       } else {
-        // 🟢 Sign Up
+        // Sign up
         const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: formData.email,
+          password: formData.password,
           options: {
-            data: { full_name: name }
+            data: { full_name: formData.name }
           }
         });
         if (error) throw error;
-        toast({ title: '🎉 Account created! Check your inbox for verification link.' });
+        toast({ title: "Check your email to confirm signup!" });
+        onClose();
       }
-
-      resetForm();
-      onClose();
     } catch (error) {
-      toast({ title: `❌ ${error.message}` });
-    } finally {
-      setLoading(false);
+      toast({ title: error.message });
     }
   };
 
   const handleGoogleAuth = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google'
-      });
-      if (error) throw error;
-    } catch (error) {
-      toast({ title: `❌ ${error.message}` });
-    }
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.origin }
+    });
   };
 
   const resetForm = () => {
-    setFormData({
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    });
+    setFormData({ name: '', email: '', password: '', confirmPassword: '' });
     setShowPassword(false);
   };
 
@@ -105,7 +87,7 @@ const AuthModal = ({ isOpen, onClose }) => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.8, opacity: 0 }}
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
@@ -199,10 +181,9 @@ const AuthModal = ({ isOpen, onClose }) => {
 
             <Button
               type="submit"
-              disabled={loading}
               className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold py-3 text-lg hover-glow"
             >
-              {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
+              {isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
 
@@ -222,7 +203,7 @@ const AuthModal = ({ isOpen, onClose }) => {
             <img
               className="w-5 h-5 mr-3"
               alt="Google logo"
-              src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Google__G__Logo.svg"
+              src="https://images.unsplash.com/photo-1649180549324-3e03951391aa"
             />
             Continue with Google
           </Button>
