@@ -3,10 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
+import { supabase } from '@/lib/supabaseClient';
 
 const AuthModal = ({ isOpen, onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,18 +23,55 @@ const AuthModal = ({ isOpen, onClose }) => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const action = isLogin ? 'Sign in' : 'Sign up';
-    toast({
-      title: `🚧 ${action} functionality isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀`
-    });
+    setLoading(true);
+
+    const { email, password, name, confirmPassword } = formData;
+
+    try {
+      if (!isLogin && password !== confirmPassword) {
+        toast({ title: '⚠️ Passwords do not match' });
+        setLoading(false);
+        return;
+      }
+
+      if (isLogin) {
+        // 🟢 Sign In
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast({ title: '✅ Signed in successfully!' });
+      } else {
+        // 🟢 Sign Up
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: name }
+          }
+        });
+        if (error) throw error;
+        toast({ title: '🎉 Account created! Check your inbox for verification link.' });
+      }
+
+      resetForm();
+      onClose();
+    } catch (error) {
+      toast({ title: `❌ ${error.message}` });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGoogleAuth = () => {
-    toast({
-      title: "🚧 Google authentication isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀"
-    });
+  const handleGoogleAuth = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google'
+      });
+      if (error) throw error;
+    } catch (error) {
+      toast({ title: `❌ ${error.message}` });
+    }
   };
 
   const resetForm = () => {
@@ -160,9 +199,10 @@ const AuthModal = ({ isOpen, onClose }) => {
 
             <Button
               type="submit"
+              disabled={loading}
               className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold py-3 text-lg hover-glow"
             >
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {loading ? 'Please wait...' : isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
 
@@ -179,10 +219,11 @@ const AuthModal = ({ isOpen, onClose }) => {
             variant="outline"
             className="w-full border-slate-600 text-slate-300 hover:bg-white/10 py-3"
           >
-            <img 
-              className="w-5 h-5 mr-3" 
+            <img
+              className="w-5 h-5 mr-3"
               alt="Google logo"
-             src="https://images.unsplash.com/photo-1649180549324-3e03951391aa" />
+              src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Google__G__Logo.svg"
+            />
             Continue with Google
           </Button>
 
