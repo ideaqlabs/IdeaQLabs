@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { Users, Award, Globe, Heart } from "lucide-react";
 
 // ✅ Import local images (place these inside src/assets folder)
-import IshanImg from "@/assets/Ishan.jpg";
-import DeepImg from "@/assets/Deep.jpg";
+import IshanImg from "@/assets/Ishan.jpeg";
+import DeepImg from "@/assets/Deep.jpeg";
 import EmilyImg from "@/assets/Emily.jpg";
 
 const About = () => {
