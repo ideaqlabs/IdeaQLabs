@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code, Menu, X } from "lucide-react";
+import { Code, User, Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) => {
@@ -15,14 +15,11 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
   ];
 
   // Extract first name safely
-  const firstName =
-    user?.user_metadata?.full_name?.split(" ")[0] ||
-    user?.email?.split("@")[0] ||
-    "User";
+  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "User";
 
   return (
     <motion.header
-      className="glass-effect sticky top-0 z-50 px-6 py-4 border-b border-white/10"
+      className="glass-effect sticky top-0 z-50 px-6 py-4"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
@@ -30,17 +27,16 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <motion.div
-          className="flex items-center space-x-3 cursor-pointer"
+          className="flex items-center space-x-3"
           whileHover={{ scale: 1.05 }}
-          onClick={() => setCurrentPage("home")}
         >
-          <div className="p-2 bg-gradient-to-r from-sky-400 to-yellow-400 rounded-lg shadow-md">
+          <div className="p-2 bg-gradient-to-r from-sky-400 to-yellow-400 rounded-lg">
             <Code className="h-6 w-6 text-slate-900" />
           </div>
           <span className="text-xl font-bold gradient-text">IdeaQLabs</span>
         </motion.div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center space-x-8">
           {navItems.map((item) => (
             <motion.button
@@ -59,27 +55,31 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
           ))}
         </nav>
 
-        {/* Auth Button + Mobile Menu */}
+        {/* Auth Button + Hamburger */}
         <div className="flex items-center space-x-3">
+          {/* Desktop Auth Section */}
           {!user ? (
             <Button
               onClick={onAuthClick}
-              className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold"
+              className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold hidden md:flex"
             >
+              <User className="h-4 w-4 mr-2" />
               Sign In
             </Button>
           ) : (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-yellow-400 flex items-center justify-center text-slate-900 font-semibold shadow-md">
-                {firstName[0]?.toUpperCase()}
-              </div>
-              <span className="text-slate-100 font-medium text-sm sm:text-base">
-                {firstName}
-              </span>
+            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg">
+              <span className="text-yellow-300 font-semibold">{firstName}</span>
+              <button
+                onClick={onSignOut}
+                className="p-2 hover:bg-white/10 rounded-full transition"
+                title="Sign Out"
+              >
+                <LogOut className="h-5 w-5 text-sky-400 hover:text-yellow-400" />
+              </button>
             </div>
           )}
 
-          {/* Hamburger Icon */}
+          {/* Mobile Hamburger */}
           <button
             className="md:hidden p-2 rounded-lg text-slate-200 hover:bg-white/10"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -93,7 +93,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
-            className="md:hidden mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg border border-white/10 shadow-lg"
+            className="md:hidden mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
@@ -115,28 +115,30 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
               </button>
             ))}
 
-            {/* Auth Options in Hamburger */}
-            {!user ? (
-              <button
-                onClick={() => {
-                  onAuthClick();
-                  setMobileOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 mt-2 text-slate-200 bg-gradient-to-r from-sky-500 to-yellow-500 rounded-lg hover:from-sky-600 hover:to-yellow-600 font-semibold"
-              >
-                Sign In
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  onSignOut();
-                  setMobileOpen(false);
-                }}
-                className="w-full text-left px-4 py-2 mt-2 text-slate-200 bg-gradient-to-r from-rose-500 to-amber-500 rounded-lg hover:from-rose-600 hover:to-amber-600 font-semibold"
-              >
-                Sign Out
-              </button>
-            )}
+            {/* Mobile Auth Section */}
+            <div className="border-t border-slate-700 mt-3 pt-3">
+              {!user ? (
+                <button
+                  onClick={() => {
+                    onAuthClick();
+                    setMobileOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold px-4 py-2 rounded-lg"
+                >
+                  <User className="h-4 w-4" /> Sign In
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    onSignOut();
+                    setMobileOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold px-4 py-2 rounded-lg"
+                >
+                  <LogOut className="h-4 w-4" /> Sign Out
+                </button>
+              )}
+            </div>
           </motion.nav>
         )}
       </AnimatePresence>
