@@ -67,17 +67,32 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
               Sign In
             </Button>
           ) : (
-            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg">
-              <span className="text-yellow-300 font-semibold">{firstName}</span>
-              <button
-                onClick={onSignOut}
-                className="p-2 hover:bg-white/10 rounded-full transition"
-                title="Sign Out"
-              >
-                <LogOut className="h-5 w-5 text-sky-400 hover:text-yellow-400" />
-              </button>
-            </div>
-          )}
+            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg relative group">
+  <span className="text-yellow-300 font-semibold">{firstName}</span>
+
+  {/* Sign Out Button with Animated Tooltip */}
+  <div className="relative flex items-center">
+    <button
+      onClick={onSignOut}
+      className="p-2 hover:bg-white/10 rounded-full transition relative"
+    >
+      <LogOut className="h-5 w-5 text-sky-400 hover:text-yellow-400" />
+    </button>
+
+    {/* Custom Tooltip */}
+    <motion.div
+      initial={{ opacity: 0, y: 5 }}
+      whileHover={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className="absolute left-1/2 -translate-x-1/2 top-10 opacity-0 group-hover:opacity-100 pointer-events-none"
+    >
+      <div className="glass-effect text-slate-100 text-sm px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-md border border-white/10 whitespace-nowrap">
+        Sign Out
+      </div>
+    </motion.div>
+  </div>
+</div>
+
 
           {/* Mobile Hamburger */}
           <button
