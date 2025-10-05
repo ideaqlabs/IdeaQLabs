@@ -5,6 +5,16 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { supabase } from "@/lib/supabaseClient"; // Make sure this exists
 
+// Add this inside AuthModal.jsx, above your main component
+const GoogleIcon = () => (
+  <svg className="w-5 h-5 mr-3" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#4285F4" d="M533.5 278.4c0-17.3-1.5-34-4.3-50.3H272v95h146.8c-6.3 34-25.6 62.8-54.4 82v68h87.8c51.4-47.4 81.3-117.3 81.3-194.7z"/>
+    <path fill="#34A853" d="M272 544.3c73.7 0 135.7-24.5 180.9-66.3l-87.8-68c-24.3 16.3-55.4 26-93.1 26-71.6 0-132.3-48.3-154.1-112.8H27.7v70.9C72.3 476.4 165.8 544.3 272 544.3z"/>
+    <path fill="#FBBC05" d="M117.9 323.1c-10.5-31.5-10.5-65.9 0-97.4v-70.9H27.7C-2.8 231 0 331.3 27.7 394l90.2-70.9z"/>
+    <path fill="#EA4335" d="M272 107.6c39 0 74 13.5 101.7 39.8l76.2-76.2C407.6 24.8 345.6 0 272 0 165.8 0 72.3 67.9 27.7 172.2l90.2 70.9C139.7 156 200.4 107.6 272 107.6z"/>
+  </svg>
+);
+
 const AuthModal = ({ isOpen, onClose, setUser }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
