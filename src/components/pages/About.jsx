@@ -1,31 +1,39 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Users, Award, Globe, Heart } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { Users, Award, Globe, Heart } from "lucide-react";
+
+// ✅ Import local images (place these inside src/assets folder)
+import IshanImg from "@/assets/Ishan.jpg";
+import DeepImg from "@/assets/Deep.jpg";
+import EmilyImg from "@/assets/Emily.jpg";
 
 const About = () => {
   const stats = [
     { icon: <Users className="h-8 w-8" />, number: "20+", label: "Expert Developers" },
     { icon: <Award className="h-8 w-8" />, number: "50+", label: "Projects Completed" },
     { icon: <Globe className="h-8 w-8" />, number: "15+", label: "Countries Served" },
-    { icon: <Heart className="h-8 w-8" />, number: "98%", label: "Client Satisfaction" }
+    { icon: <Heart className="h-8 w-8" />, number: "98%", label: "Client Satisfaction" },
   ];
 
   const team = [
     {
       name: "Ishan",
       role: "CEO & Founder",
-      description: "Young entrepreneur with a vision to create disruption in web3.0 technologies"
+      description: "Young entrepreneur with a vision to create disruption in web3.0 technologies.",
+      image: IshanImg,
     },
     {
       name: "Deep",
       role: "CTO & Co-Founder",
-      description: "Visionary leader with 15+ years in tech innovation"
+      description: "Visionary leader with 15+ years in tech innovation.",
+      image: DeepImg,
     },
     {
-      name: "Emily Rodriguez",
+      name: "Emily",
       role: "Lead Designer",
-      description: "Creative genius crafting beautiful user experiences"
-    }
+      description: "Creative genius crafting beautiful user experiences.",
+      image: EmilyImg,
+    },
   ];
 
   return (
@@ -60,17 +68,20 @@ const About = () => {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
                 <p className="text-lg text-slate-300 mb-6">
-                  Founded in 2025, IdeaQLabs emerges from a simple belief: Technology should empower, not complicate. Our journey began in a small room with two passionate developers who shared a vision of creating software that truly makes a difference.
+                  Founded in 2025, IdeaQLabs emerges from a simple belief: Technology should empower, not complicate.
+                  Our journey began in a small room with two passionate developers who shared a vision of creating software that truly makes a difference.
                 </p>
                 <p className="text-lg text-slate-300">
-                  Today, we've grown into a dynamic team of 10+ professionals, but our core values remain unchanged. We believe in innovation, quality and the transformative power of well-crafted software solutions.
+                  Today, we've grown into a dynamic team of 10+ professionals, but our core values remain unchanged.
+                  We believe in innovation, quality, and the transformative power of well-crafted software solutions.
                 </p>
               </div>
               <div className="relative">
-                <img 
-                  className="rounded-2xl shadow-2xl hover-glow" 
+                <img
+                  className="rounded-2xl shadow-2xl hover-glow"
                   alt="Team working together in modern office"
-                 src="https://images.unsplash.com/photo-1565841327798-694bc2074762" />
+                  src="https://images.unsplash.com/photo-1565841327798-694bc2074762"
+                />
               </div>
             </div>
           </div>
@@ -123,10 +134,11 @@ const About = () => {
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 whileHover={{ scale: 1.05 }}
               >
-                <img 
-                  className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-sky-400" 
+                <img
+                  className="w-28 h-28 rounded-full mx-auto mb-6 border-4 border-sky-400 object-cover"
                   alt={`${member.name} - ${member.role}`}
-                 src="main/src/Ishan.jpeg" />
+                  src={member.image}
+                />
                 <h3 className="text-2xl font-semibold text-white mb-2">{member.name}</h3>
                 <p className="text-yellow-400 font-medium mb-4">{member.role}</p>
                 <p className="text-slate-300">{member.description}</p>
