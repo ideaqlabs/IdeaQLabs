@@ -1,135 +1,128 @@
 import React, { useState } from "react";
-import { Menu, X, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Code, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const pages = [
-    { name: "Home", id: "home" },
-    { name: "About", id: "about" },
-    { name: "Vision", id: "vision" },
-    { name: "Products", id: "products" },
-    { name: "Contact", id: "contact" },
+  const navItems = [
+    { id: "home", label: "Home" },
+    { id: "about", label: "About Us" },
+    { id: "vision", label: "Vision" },
+    { id: "products", label: "Products" },
+    { id: "contact", label: "Contact Us" },
   ];
 
-  // Get only the first name
-  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "User";
+  // Extract first name safely
+  const firstName =
+    user?.user_metadata?.full_name?.split(" ")[0] ||
+    user?.email?.split("@")[0] ||
+    "User";
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-slate-900/70 backdrop-blur-lg border-b border-slate-800">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+    <motion.header
+      className="glass-effect sticky top-0 z-50 px-6 py-4 border-b border-white/10"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div
+        <motion.div
+          className="flex items-center space-x-3 cursor-pointer"
+          whileHover={{ scale: 1.05 }}
           onClick={() => setCurrentPage("home")}
-          className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-yellow-400 cursor-pointer"
         >
-          IdeaQLabs
-        </div>
+          <div className="p-2 bg-gradient-to-r from-sky-400 to-yellow-400 rounded-lg shadow-md">
+            <Code className="h-6 w-6 text-slate-900" />
+          </div>
+          <span className="text-xl font-bold gradient-text">IdeaQLabs</span>
+        </motion.div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex space-x-8 text-slate-300">
-          {pages.map((page) => (
-            <button
-              key={page.id}
-              onClick={() => setCurrentPage(page.id)}
-              className={`hover:text-sky-400 transition-colors ${
-                currentPage === page.id ? "text-sky-400" : ""
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center space-x-8">
+          {navItems.map((item) => (
+            <motion.button
+              key={item.id}
+              onClick={() => setCurrentPage(item.id)}
+              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                currentPage === item.id
+                  ? "bg-sky-400 text-slate-900 font-semibold"
+                  : "text-slate-200 hover:text-yellow-400 hover:bg-white/10"
               }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {page.name}
-            </button>
+              {item.label}
+            </motion.button>
           ))}
         </nav>
 
-        {/* Auth / Profile Section */}
+        {/* Auth Button + Mobile Menu */}
         <div className="flex items-center space-x-3">
           {!user ? (
             <Button
               onClick={onAuthClick}
-              className="bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold hover:from-sky-400 hover:to-yellow-400 transition-all"
+              className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold"
             >
               Sign In
             </Button>
           ) : (
-            <div className="relative">
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center space-x-2 bg-slate-800/60 px-3 py-2 rounded-lg hover:bg-slate-700/60 transition-colors"
-              >
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-500 to-yellow-400 flex items-center justify-center text-slate-900 font-semibold">
-                  {firstName[0]?.toUpperCase()}
-                </div>
-                <span className="text-slate-200 font-medium hidden sm:block">{firstName}</span>
-              </button>
-
-              <AnimatePresence>
-                {dropdownOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                    className="absolute right-0 mt-2 w-40 bg-slate-800 border border-slate-700 rounded-xl shadow-lg py-2 z-50"
-                  >
-                    <button
-                      onClick={() => {
-                        onSignOut();
-                        setDropdownOpen(false);
-                      }}
-                      className="flex items-center w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-700 transition"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-sky-400 to-yellow-400 flex items-center justify-center text-slate-900 font-semibold shadow-md">
+                {firstName[0]?.toUpperCase()}
+              </div>
+              <span className="text-slate-100 font-medium text-sm sm:text-base">
+                {firstName}
+              </span>
             </div>
           )}
 
-          {/* Mobile Menu Toggle */}
+          {/* Hamburger Icon */}
           <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden text-slate-300 hover:text-sky-400 transition-colors"
+            className="md:hidden p-2 rounded-lg text-slate-200 hover:bg-white/10"
+            onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {menuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {menuOpen && (
-          <motion.div
+        {mobileOpen && (
+          <motion.nav
+            className="md:hidden mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg border border-white/10 shadow-lg"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="md:hidden bg-slate-900/95 border-t border-slate-800"
           >
-            {pages.map((page) => (
+            {navItems.map((item) => (
               <button
-                key={page.id}
+                key={item.id}
                 onClick={() => {
-                  setCurrentPage(page.id);
-                  setMenuOpen(false);
+                  setCurrentPage(item.id);
+                  setMobileOpen(false);
                 }}
-                className={`block w-full text-left px-6 py-4 text-slate-300 hover:bg-slate-800 ${
-                  currentPage === page.id ? "text-sky-400" : ""
+                className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-300 ${
+                  currentPage === item.id
+                    ? "bg-sky-400 text-slate-900 font-semibold"
+                    : "text-slate-200 hover:text-yellow-400 hover:bg-white/10"
                 }`}
               >
-                {page.name}
+                {item.label}
               </button>
             ))}
 
+            {/* Auth Options in Hamburger */}
             {!user ? (
               <button
                 onClick={() => {
                   onAuthClick();
-                  setMenuOpen(false);
+                  setMobileOpen(false);
                 }}
-                className="block w-full text-left px-6 py-4 text-slate-300 hover:bg-slate-800 border-t border-slate-700"
+                className="w-full text-left px-4 py-2 mt-2 text-slate-200 bg-gradient-to-r from-sky-500 to-yellow-500 rounded-lg hover:from-sky-600 hover:to-yellow-600 font-semibold"
               >
                 Sign In
               </button>
@@ -137,17 +130,17 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
               <button
                 onClick={() => {
                   onSignOut();
-                  setMenuOpen(false);
+                  setMobileOpen(false);
                 }}
-                className="block w-full text-left px-6 py-4 text-slate-300 hover:bg-slate-800 border-t border-slate-700"
+                className="w-full text-left px-4 py-2 mt-2 text-slate-200 bg-gradient-to-r from-rose-500 to-amber-500 rounded-lg hover:from-rose-600 hover:to-amber-600 font-semibold"
               >
                 Sign Out
               </button>
             )}
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 };
 
