@@ -67,14 +67,20 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
               Sign In
             </Button>
           ) : (
-            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg">
+            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg relative group">
               <span className="text-yellow-300 font-semibold">{firstName}</span>
+              
+              {/* Logout Button with Tooltip */}
               <button
                 onClick={onSignOut}
-                className="p-2 hover:bg-white/10 rounded-full transition"
-                title="Sign Out"
+                className="p-2 hover:bg-white/10 rounded-full transition relative"
               >
                 <LogOut className="h-5 w-5 text-sky-400 hover:text-yellow-400" />
+                
+                {/* Tooltip */}
+                <span className="absolute top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gradient-to-r from-sky-700/80 to-blue-800/80 backdrop-blur-md border border-sky-400/30 rounded-xl shadow-lg px-3 py-1 text-white text-xs whitespace-nowrap">
+                  Sign Out
+                </span>
               </button>
             </div>
           )}
