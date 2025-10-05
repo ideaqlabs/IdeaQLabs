@@ -218,20 +218,14 @@ const AuthModal = ({ isOpen, onClose, setUser }) => {
             <div className="flex-1 border-t border-slate-600"></div>
           </div>
 
-          {/* Google Auth */}
           <Button
             onClick={handleGoogleAuth}
             variant="outline"
-            className="w-full flex items-center justify-center gap-3 bg-slate-800/50 border border-slate-600 text-slate-200 hover:bg-white/10 py-3 rounded-lg transition-all"
+            className="w-full border-slate-600 text-slate-300 hover:bg-white/10 py-3 flex items-center justify-center"
           >
-            <img
-              src="/google-icon.svg"
-              alt="Google logo"
-              className="w-5 h-5"
-            />
-            <span className="font-semibold">Continue with Google</span>
-          </Button>
-
+            <GoogleIcon />
+            Continue with Google
+            </Button>
 
           {/* Switch Mode */}
           <div className="text-center mt-6">
