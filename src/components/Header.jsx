@@ -1,184 +1,148 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { Button } from "../../components/ui/button";
-import { useAuth } from "../../context/AuthContext"; // Ensure your auth context path is correct
-import { useNavigate } from "react-router-dom";
+import { Code, User, Menu, X, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const Header = ({ onAuthClick }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const navItems = [
+    { id: "home", label: "Home" },
+    { id: "about", label: "About Us" },
+    { id: "vision", label: "Vision" },
+    { id: "products", label: "Products" },
+    { id: "contact", label: "Contact Us" },
+  ];
 
-  const firstName = user?.user_metadata?.full_name
-    ? user.user_metadata.full_name.split(" ")[0]
-    : user?.email?.split("@")[0];
+  // Extract first name safely
+  const firstName = user?.user_metadata?.full_name?.split(" ")[0] || "User";
 
   return (
-    <header className="fixed top-0 left-0 w-full backdrop-blur-md bg-black/30 border-b border-white/10 z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+    <motion.header
+      className="glass-effect sticky top-0 z-50 px-6 py-4"
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo */}
         <motion.div
-          onClick={() => navigate("/")}
-          className="cursor-pointer flex items-center space-x-2"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          className="flex items-center space-x-3"
+          whileHover={{ scale: 1.05 }}
         >
-          <img
-            src="/logo192.png"
-            alt="IdeaQLabs Logo"
-            className="w-8 h-8 rounded-full shadow-lg"
-          />
-          <span className="text-2xl font-bold gradient-text">IdeaQLabs</span>
+          <div className="p-2 bg-gradient-to-r from-sky-400 to-yellow-400 rounded-lg">
+            <Code className="h-6 w-6 text-slate-900" />
+          </div>
+          <span className="text-xl font-bold gradient-text">IdeaQLabs</span>
         </motion.div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex space-x-8 text-slate-200 text-lg">
-          <button
-            onClick={() => navigate("/")}
-            className="hover:text-white transition-colors"
-          >
-            Home
-          </button>
-          <button
-            onClick={() => navigate("/about")}
-            className="hover:text-white transition-colors"
-          >
-            About
-          </button>
-          <button
-            onClick={() => navigate("/projects")}
-            className="hover:text-white transition-colors"
-          >
-            Projects
-          </button>
-          <button
-            onClick={() => navigate("/contact")}
-            className="hover:text-white transition-colors"
-          >
-            Contact
-          </button>
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center space-x-8">
+          {navItems.map((item) => (
+            <motion.button
+              key={item.id}
+              onClick={() => setCurrentPage(item.id)}
+              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                currentPage === item.id
+                  ? "bg-sky-400 text-slate-900 font-semibold"
+                  : "text-slate-200 hover:text-yellow-400 hover:bg-white/10"
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {item.label}
+            </motion.button>
+          ))}
         </nav>
 
-        {/* Right Section */}
+        {/* Auth Button + Hamburger */}
         <div className="flex items-center space-x-3">
-          {user ? (
-            // ✅ Signed-in State (desktop)
-            <div className="hidden md:flex items-center bg-white/10 px-4 py-2 rounded-lg relative group cursor-pointer">
-              <span className="text-white font-medium">{firstName}</span>
-
-              {/* Tooltip for Sign Out */}
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute top-12 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition bg-black/90 text-white text-sm px-4 py-2 rounded-lg shadow-lg border border-white/10 whitespace-nowrap"
-              >
-                <button
-                  onClick={signOut}
-                  className="hover:text-red-400 transition-colors"
-                >
-                  Sign Out
-                </button>
-              </motion.div>
-            </div>
-          ) : (
-            // ✅ Sign-in button (desktop)
+          {/* Desktop Auth Section */}
+          {!user ? (
             <Button
               onClick={onAuthClick}
-              className="hidden md:flex bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold hover:opacity-90 transition-all rounded-lg px-4 py-2 shadow-md"
+              className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold hidden md:flex"
             >
+              <User className="h-4 w-4 mr-2" />
               Sign In
             </Button>
+          ) : (
+            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg">
+              <span className="text-yellow-300 font-semibold">{firstName}</span>
+              <button
+                onClick={onSignOut}
+                className="p-2 hover:bg-white/10 rounded-full transition"
+                title="Sign Out"
+              >
+                <LogOut className="h-5 w-5 text-sky-400 hover:text-yellow-400" />
+              </button>
+            </div>
           )}
 
-          {/* ✅ Hamburger (always visible on mobile) */}
+          {/* Mobile Hamburger */}
           <button
-            onClick={toggleMenu}
-            className="md:hidden text-white hover:text-sky-400 transition-colors"
+            className="md:hidden p-2 rounded-lg text-slate-200 hover:bg-white/10"
+            onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
-      {/* ✅ Mobile Menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {menuOpen && (
+        {mobileOpen && (
           <motion.nav
+            className="md:hidden mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-black/70 backdrop-blur-md border-t border-white/10 px-6 py-4 space-y-4 text-slate-200 text-lg"
           >
-            <button
-              onClick={() => {
-                navigate("/");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left hover:text-white transition-colors"
-            >
-              Home
-            </button>
-            <button
-              onClick={() => {
-                navigate("/about");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left hover:text-white transition-colors"
-            >
-              About
-            </button>
-            <button
-              onClick={() => {
-                navigate("/projects");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left hover:text-white transition-colors"
-            >
-              Projects
-            </button>
-            <button
-              onClick={() => {
-                navigate("/contact");
-                setMenuOpen(false);
-              }}
-              className="block w-full text-left hover:text-white transition-colors"
-            >
-              Contact
-            </button>
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setCurrentPage(item.id);
+                  setMobileOpen(false);
+                }}
+                className={`w-full text-left px-4 py-2 rounded-lg transition-all duration-300 ${
+                  currentPage === item.id
+                    ? "bg-sky-400 text-slate-900 font-semibold"
+                    : "text-slate-200 hover:text-yellow-400 hover:bg-white/10"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
 
-            <div className="pt-4 border-t border-white/10">
-              {user ? (
-                <Button
-                  onClick={() => {
-                    signOut();
-                    setMenuOpen(false);
-                  }}
-                  className="w-full bg-gradient-to-r from-rose-500 to-red-600 text-white font-semibold hover:opacity-90 transition-all rounded-lg"
-                >
-                  Sign Out
-                </Button>
-              ) : (
-                <Button
+            {/* Mobile Auth Section */}
+            <div className="border-t border-slate-700 mt-3 pt-3">
+              {!user ? (
+                <button
                   onClick={() => {
                     onAuthClick();
-                    setMenuOpen(false);
+                    setMobileOpen(false);
                   }}
-                  className="w-full bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold hover:opacity-90 transition-all rounded-lg"
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold px-4 py-2 rounded-lg"
                 >
-                  Sign In
-                </Button>
+                  <User className="h-4 w-4" /> Sign In
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    onSignOut();
+                    setMobileOpen(false);
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-700 text-white font-semibold px-4 py-2 rounded-lg"
+                >
+                  <LogOut className="h-4 w-4" /> Sign Out
+                </button>
               )}
             </div>
           </motion.nav>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 };
 
