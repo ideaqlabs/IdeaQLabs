@@ -30,6 +30,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
   const userEmail = user?.email || "";
   const avatarUrl = user?.user_metadata?.avatar_url || user?.user_metadata?.picture || null;
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -42,7 +43,6 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
 
   return (
     <>
-      {/* HEADER BAR (glass area only for header row) */}
       <motion.header
         className="glass-effect sticky top-0 z-[60] px-6 py-4 backdrop-blur-md bg-slate-900/60 border-b border-slate-800"
         initial={{ y: -100 }}
@@ -90,7 +90,10 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
             ) : (
               <div className="relative" ref={dropdownRef}>
                 <motion.button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  onClick={() => {
+                    setDropdownOpen(!dropdownOpen);
+                    if (!dropdownOpen) setMobileOpen(false); // ✅ close hamburger when avatar menu opens
+                  }}
                   whileHover={{ scale: 1.05 }}
                   className="flex items-center focus:outline-none"
                 >
@@ -149,7 +152,10 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
             {/* Hamburger Menu */}
             <button
               className="p-2 rounded-lg text-slate-200 hover:bg-white/10"
-              onClick={() => setMobileOpen(!mobileOpen)}
+              onClick={() => {
+                setMobileOpen(!mobileOpen);
+                if (!mobileOpen) setDropdownOpen(false); // ✅ close avatar menu when hamburger opens
+              }}
             >
               {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -157,7 +163,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
         </div>
       </motion.header>
 
-      {/* DROPDOWN MENU LAYERED ABOVE HEADER */}
+      {/* Mobile + Desktop Hamburger Menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
@@ -192,3 +198,4 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
 };
 
 export default Header;
+
