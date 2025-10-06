@@ -1,6 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code, Menu, X, LogOut, UserCircle2, Settings, HelpCircle, LayoutDashboard, User } from "lucide-react";
+import {
+  Code,
+  Menu,
+  X,
+  LogOut,
+  UserCircle2,
+  Settings,
+  HelpCircle,
+  LayoutDashboard,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) => {
@@ -135,7 +145,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
             </div>
           )}
 
-          {/* Hamburger Menu (Always visible) */}
+          {/* Hamburger Menu (Visible on all devices) */}
           <button
             className="p-2 rounded-lg text-slate-200 hover:bg-white/10"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -145,11 +155,11 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Hamburger Navigation (Now for both Desktop & Mobile) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
-            className="md:hidden mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg"
+            className="mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg md:rounded-2xl"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
