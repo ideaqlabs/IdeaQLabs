@@ -42,14 +42,14 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
 
   return (
     <>
-      {/* Header Bar (Fixed Height) */}
+      {/* HEADER BAR (glass area only for header row) */}
       <motion.header
-        className="glass-effect sticky top-0 z-50 px-6 py-4 backdrop-blur-md bg-slate-900/60 border-b border-slate-800"
+        className="glass-effect sticky top-0 z-[60] px-6 py-4 backdrop-blur-md bg-slate-900/60 border-b border-slate-800"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-7xl mx-auto flex items-center justify-between relative z-[70]">
           {/* Logo */}
           <motion.div className="flex items-center space-x-3" whileHover={{ scale: 1.05 }}>
             <div className="p-2 bg-gradient-to-r from-sky-400 to-yellow-400 rounded-lg">
@@ -77,7 +77,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
             ))}
           </nav>
 
-          {/* Right Section (Auth + Hamburger) */}
+          {/* Right Section */}
           <div className="flex items-center space-x-4">
             {!user ? (
               <Button
@@ -113,7 +113,8 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute right-0 mt-3 w-56 bg-slate-900/95 backdrop-blur-md border border-slate-700 rounded-xl shadow-xl p-3 z-50"
+                      className="absolute right-0 mt-3 w-56 bg-slate-900/95 backdrop-blur-md 
+                                 border border-slate-700 rounded-xl shadow-xl p-3 z-[80]"
                     >
                       <div className="px-3 py-2 border-b border-slate-700">
                         <p className="text-white font-semibold">{userName}</p>
@@ -156,13 +157,13 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
         </div>
       </motion.header>
 
-      {/* Dropdown Menu Detached from Header */}
+      {/* DROPDOWN MENU LAYERED ABOVE HEADER */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
-            className="fixed md:absolute md:right-6 mt-2 flex flex-col space-y-2 bg-slate-900/90 
+            className="fixed md:absolute md:right-6 top-[72px] flex flex-col space-y-2 bg-slate-900/95 
                        md:rounded-2xl md:w-[20%] w-full md:border md:border-slate-700 
-                       backdrop-blur-md z-40 p-4 rounded-b-lg"
+                       backdrop-blur-md z-[75] p-4 rounded-b-lg shadow-xl"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
