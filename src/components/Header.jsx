@@ -155,11 +155,12 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
         </div>
       </div>
 
-      {/* Hamburger Navigation (Now for both Desktop & Mobile) */}
+      {/* Unified Hamburger Menu (Desktop + Mobile) */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.nav
-            className="mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg md:rounded-2xl"
+            className="mt-4 flex flex-col space-y-2 bg-slate-900/90 p-4 rounded-lg md:rounded-2xl
+                       md:ml-auto md:mr-0 md:w-[20%] w-full md:border md:border-slate-700"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
