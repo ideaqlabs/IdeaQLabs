@@ -23,14 +23,14 @@ const Contact = () => {
     {
       icon: <Phone className="h-6 w-6" />,
       title: "Call Us",
-      details: "+91 765 880 7077",
-      subDetails: "+91 765 880 7077"
+      details: "+1",
+      subDetails: "+1"
     },
     {
       icon: <MapPin className="h-6 w-6" />,
       title: "Visit Us",
       details: "123 Innovation Drive",
-      subDetails: "IdeaQ Valley, PB 94025"
+      subDetails: "Silicon Valley, CA 94025"
     },
     {
       icon: <Clock className="h-6 w-6" />,
