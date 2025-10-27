@@ -3,13 +3,6 @@ import ReactDOM from 'react-dom/client';
 import App from '@/App';
 import '@/index.css';
 import { createClient } from '@supabase/supabase-js';
-import { AuthProvider } from "./context/AuthContext";
-
-root.render(
-  <AuthProvider>
-    <App />
-  </AuthProvider>
-);
 
 const supabaseUrl = 'https://YOUR-PROJECT-REF.supabase.co';
 const supabaseAnonKey = 'YOUR-ANON-KEY';
