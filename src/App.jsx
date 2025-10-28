@@ -41,22 +41,24 @@ function App() {
     window.history.replaceState({}, document.title, "/"); // Remove any #access_token
   };
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case "home":
-        return <Home />;
-      case "about":
-        return <About />;
-      case "vision":
-        return <Vision />;
-      case "products":
-        return <Products />;
-      case "contact":
-        return <Contact />;
-      default:
-        return <Home />;
-    }
-  };
+const renderPage = () => {
+  switch (currentPage) {
+    case "home":
+      return <Home setCurrentPage={setCurrentPage} />;
+    case "about":
+      return <About />;
+    case "vision":
+      return <Vision />;
+    case "products":
+      return <Products />;
+    case "contact":
+      return <Contact />;
+    case "earn":                                     // 🆕 add this
+      return <Earn setCurrentPage={setCurrentPage} />; 
+    default:
+      return <Home setCurrentPage={setCurrentPage} />;
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col">
