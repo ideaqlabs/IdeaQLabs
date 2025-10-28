@@ -46,7 +46,13 @@ function App() {
 const renderPage = () => {
   switch (currentPage) {
     case "home":
-      return <Home setCurrentPage={setCurrentPage} />;
+      return (
+        <Home
+          setCurrentPage={setCurrentPage}
+          onAuthClick={() => setIsAuthModalOpen(true)}
+          user={user}
+        />
+      );
     case "about":
       return <About />;
     case "earn":
