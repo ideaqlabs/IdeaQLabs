@@ -23,6 +23,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
     { id: "about", label: "About" },
     { id: "earn", label: "Earn" },
     { id: "learn", label: "Learn" },
+    { id: "Mentor", label: "Mentor" },
     { id: "products", label: "Products" },
     { id: "contact", label: "Contact" },
   ];
