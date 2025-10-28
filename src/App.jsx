@@ -60,7 +60,7 @@ const renderPage = () => {
     case "contact":
       return <Contact />;
     case "dashboard":
-      return <Dashboard />;
+      return user ? <Dashboard /> : <Home setCurrentPage={setCurrentPage} />;
     default:
       return <Home setCurrentPage={setCurrentPage} />;
   }
