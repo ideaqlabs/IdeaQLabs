@@ -73,6 +73,11 @@ const Home = ({ setCurrentPage, user, onAuthClick }) => {
                 if (user) {
                   setCurrentPage("dashboard");
                 } else {
+                  toast({
+                    title: "Login Required",
+                    description: "Please log in to access your dashboard.",
+                    variant: "destructive",
+                  });
                   onAuthClick(); // opens login modal
                 }
               }}
