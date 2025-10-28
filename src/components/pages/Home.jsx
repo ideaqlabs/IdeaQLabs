@@ -60,12 +60,13 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <Button 
-              onClick={handleGetStarted}
-              className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold px-8 py-3 text-lg hover-glow"
-            >
-              Get Started <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <Button
+  onClick={() => setCurrentPage("earn")}
+  className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold px-8 py-3 text-lg hover-glow"
+>
+  Start Earning <ArrowRight className="ml-2 h-5 w-5" />
+</Button>
+
             <Button 
               variant="outline" 
               onClick={handleGetStarted}
