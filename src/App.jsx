@@ -9,6 +9,7 @@ import Learn from "@/components/pages/Learn";
 import Mentor from "@/components/pages/Mentor";
 import Products from "@/components/pages/Products";
 import Contact from "@/components/pages/Contact";
+import Dashboard from "@/components/pages/Dashboard";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import { Toaster } from "@/components/ui/toaster";
@@ -58,6 +59,8 @@ const renderPage = () => {
       return <Products />;
     case "contact":
       return <Contact />;
+    case "dashboard":
+      return <Dashboard />;
     default:
       return <Home setCurrentPage={setCurrentPage} />;
   }
