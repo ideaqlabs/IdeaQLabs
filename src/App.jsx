@@ -6,6 +6,7 @@ import Home from "@/components/pages/Home";
 import About from "@/components/pages/About";
 import Earn from "@/components/pages/Earn";
 import Learn from "@/components/pages/Learn";
+import Mentor from "@/components/pages/Mentor";
 import Products from "@/components/pages/Products";
 import Contact from "@/components/pages/Contact";
 import Footer from "@/components/Footer";
@@ -51,6 +52,8 @@ const renderPage = () => {
       return <Earn setCurrentPage={setCurrentPage} />;
     case "learn":
       return <Learn />;
+    case "mentor":
+      return <Mentor />;
     case "products":
       return <Products />;
     case "contact":
