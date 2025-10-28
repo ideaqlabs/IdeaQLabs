@@ -30,7 +30,7 @@ const About = () => {
       image: DeepImg,
     },
     {
-      name: "Emily",
+      name: "Chann",
       role: "Lead Designer",
       description: "Creative genius crafting beautiful user experiences.",
       image: EmilyImg,
