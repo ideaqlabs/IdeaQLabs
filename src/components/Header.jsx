@@ -132,9 +132,15 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
                         <button className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10">
                           <Settings className="h-4 w-4 mr-2" /> Settings
                         </button>
-                        <button className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10">
-                          <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
-                        </button>
+                      <button
+                        onClick={() => {
+                          setCurrentPage("dashboard");
+                          setDropdownOpen(false);
+                        }}
+                        className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10"
+                      >
+                        <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
+                      </button>
                         <button className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10">
                           <HelpCircle className="h-4 w-4 mr-2" /> FAQ's
                         </button>
