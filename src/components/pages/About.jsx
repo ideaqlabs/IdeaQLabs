@@ -10,8 +10,8 @@ import EmilyImg from "@/assets/Emily.jpg";
 const About = () => {
   // About Us data
   const stats = [
-    { icon: <Users className="h-8 w-8" />, number: "20+", label: "Expert Developers" },
-    { icon: <Award className="h-8 w-8" />, number: "50+", label: "Projects Completed" },
+    { icon: <Users className="h-8 w-8" />, number: "10+", label: "Expert Developers" },
+    { icon: <Award className="h-8 w-8" />, number: "20+", label: "Projects Completed" },
     { icon: <Globe className="h-8 w-8" />, number: "15+", label: "Countries Served" },
     { icon: <Heart className="h-8 w-8" />, number: "98%", label: "Client Satisfaction" },
   ];
