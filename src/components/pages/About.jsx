@@ -7,7 +7,7 @@ import IshanImg from "@/assets/Ishan.jpeg";
 import DeepImg from "@/assets/Deep.jpeg";
 import EmilyImg from "@/assets/Emily.jpg";
 
-const AboutAndVision = () => {
+const About = () => {
   // About Us data
   const stats = [
     { icon: <Users className="h-8 w-8" />, number: "20+", label: "Expert Developers" },
@@ -320,4 +320,4 @@ const AboutAndVision = () => {
   );
 };
 
-export default AboutAndVision;
+export default About;
