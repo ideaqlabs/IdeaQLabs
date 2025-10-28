@@ -47,14 +47,14 @@ const renderPage = () => {
       return <Home setCurrentPage={setCurrentPage} />;
     case "about":
       return <About />;
+    case "earn":
+      return <Earn setCurrentPage={setCurrentPage} />;
     case "learn":
       return <Learn />;
     case "products":
       return <Products />;
     case "contact":
       return <Contact />;
-    case "earn":                                     // 🆕 add this
-      return <Earn setCurrentPage={setCurrentPage} />; 
     default:
       return <Home setCurrentPage={setCurrentPage} />;
   }
