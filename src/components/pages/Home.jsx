@@ -67,13 +67,20 @@ const Home = ({ setCurrentPage }) => {
               Start Earning <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
 
-            <Button 
-              variant="outline" 
-              onClick={handleGetStarted}
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (user) {
+                  setCurrentPage("dashboard");
+                } else {
+                  onAuthClick(); // opens login modal
+                }
+              }}
               className="border-sky-400 text-sky-400 hover:bg-sky-400 hover:text-slate-900 px-8 py-3 text-lg"
             >
               View Dashboard
             </Button>
+
           </motion.div>
         </div>
 
