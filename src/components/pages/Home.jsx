@@ -137,7 +137,7 @@ const Home = ({ setCurrentPage }) => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            Ready to <span className="text-yellow-400">Transform</span> Your Business?
+            Ready to <span className="text-yellow-400">Transform</span> Your Life?
           </motion.h2>
           <motion.p
             className="text-xl text-slate-300 mb-8"
