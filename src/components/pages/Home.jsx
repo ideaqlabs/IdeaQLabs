@@ -72,7 +72,7 @@ const Home = ({ setCurrentPage }) => {
               onClick={handleGetStarted}
               className="border-sky-400 text-sky-400 hover:bg-sky-400 hover:text-slate-900 px-8 py-3 text-lg"
             >
-              View Portfolio
+              View Dashboard
             </Button>
           </motion.div>
         </div>
