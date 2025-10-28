@@ -47,7 +47,7 @@ const renderPage = () => {
       return <Home setCurrentPage={setCurrentPage} />;
     case "about":
       return <About />;
-    case "vision":
+    case "learn":
       return <Learn />;
     case "products":
       return <Products />;
