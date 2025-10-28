@@ -21,6 +21,7 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
   const navItems = [
     { id: "home", label: "Home" },
     { id: "about", label: "About Us" },
+    { id: "earn", label: "Earn" },
     { id: "vision", label: "Vision" },
     { id: "products", label: "Products" },
     { id: "contact", label: "Contact Us" },
