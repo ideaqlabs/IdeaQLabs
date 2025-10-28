@@ -4,7 +4,7 @@ import { ArrowRight, Zap, Shield, Rocket } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
-const Home = () => {
+const Home = ({ setCurrentPage }) => {
   const features = [
     {
       icon: <Zap className="h-8 w-8" />,
