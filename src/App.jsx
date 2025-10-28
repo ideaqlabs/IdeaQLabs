@@ -48,7 +48,7 @@ const renderPage = () => {
     case "about":
       return <About />;
     case "vision":
-      return <Vision />;
+      return <Learn />;
     case "products":
       return <Products />;
     case "contact":
