@@ -126,7 +126,19 @@ const Header = ({ currentPage, setCurrentPage, onAuthClick, user, onSignOut }) =
                         <p className="text-slate-400 text-sm truncate">{userEmail}</p>
                       </div>
                       <div className="mt-2 flex flex-col space-y-1">
-                        <button className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10">
+                        <button
+                          onClick={() => {
+                            if (user) {
+                              // user is logged in → go to Profile page
+                              setCurrentPage("profile");
+                            } else {
+                              // user not logged in → open login modal instead
+                              onAuthClick();
+                            }
+                            setDropdownOpen(false); // close dropdown in both cases
+                          }}
+                          className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10"
+                        >
                           <UserCircle2 className="h-4 w-4 mr-2" /> Profile
                         </button>
                         <button className="flex items-center px-3 py-2 rounded-lg text-slate-300 hover:bg-white/10">
