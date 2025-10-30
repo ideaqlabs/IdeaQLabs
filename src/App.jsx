@@ -23,10 +23,12 @@ function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState(null);
 
+  // Persist current page
   useEffect(() => {
     localStorage.setItem("currentPage", currentPage);
   }, [currentPage]);
 
+  // Check active session
   useEffect(() => {
     const fetchSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -42,25 +44,36 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  // ✅ Handle Sign Out — preserve mining data
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
 
-    // 🧹 Clear all Earn-related cached data
-    localStorage.removeItem("username");
-    localStorage.removeItem("miningData");
-    localStorage.removeItem("referrals");
+    // Save current page
+    const page = localStorage.getItem("currentPage");
 
-    // 🧹 Clear everything except page memory
-    const lastPage = localStorage.getItem("currentPage");
+    // Preserve all Earn-related mining data keys
+    const allKeys = { ...localStorage };
+    const miningKeys = Object.keys(allKeys).filter((k) =>
+      k.startsWith("ideaqlabs_earn_v1_")
+    );
+
+    const preservedData = {};
+    miningKeys.forEach((k) => {
+      preservedData[k] = localStorage.getItem(k);
+    });
+
+    // Clear everything else
     localStorage.clear();
-    localStorage.setItem("currentPage", "home");
 
-    // ✅ Redirect to Home if user was on a protected page
-    if (["earn", "dashboard", "profile"].includes(lastPage)) {
-      setCurrentPage("home");
-    }
+    // Restore mining data and current page
+    miningKeys.forEach((k) => {
+      localStorage.setItem(k, preservedData[k]);
+    });
+    if (page) localStorage.setItem("currentPage", page);
 
+    // Redirect to home
+    setCurrentPage("home");
     window.history.replaceState({}, document.title, "/");
   };
 
