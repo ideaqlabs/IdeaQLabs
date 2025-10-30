@@ -409,10 +409,10 @@ export default function Earn({ user, onAuthClick }) {
             { q: "How do referrals help?", a: "Each active referral adds +10% to base rate." },
             { q: "Can I change my username?", a: "No — username is permanent once confirmed." },
             { q: "Is mining tracked server-side?", a: "Not yet. We'll add server tracking later." },
-            { q: "Can I mine on multiple devices?", a: "Currently mining is per-account and session-based." },
+            { q: "Can I mine on multiple devices?", a: "No, Mining is per-account and session-based." },
             { q: "How do I see history?", a: "Dashboard page will show transaction history soon." },
             { q: "How to contact support?", a: "Use the support / contact page." },
-            { q: "Is IQU tradable?", a: "Currently it's a platform currency; later we may mint IQUE." },
+            { q: "Is IQU tradable?", a: "Currently it's a platform currency; later we will mint IQU." },
           ].map((f, idx) => (
             <details key={idx} className="mb-2 bg-slate-900/40 p-3 rounded-md">
               <summary className="cursor-pointer text-yellow-400 font-medium">{f.q}</summary>
