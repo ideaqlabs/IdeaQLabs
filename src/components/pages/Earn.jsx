@@ -52,7 +52,14 @@ export default function Earn({ user, onAuthClick }) {
   // UI state
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameLocked, setUsernameLocked] = useState(persisted?.username ?? null); // final username (non-editable once set)
-  const [isMining, setIsMining] = useState(Boolean(persisted?.miningActiveUntil && Date.now() < persisted.miningActiveUntil));
+  // ✅ Continue mining even for logged-out users (guest mode)
+  const [isMining, setIsMining] = useState(() => {
+    if (persisted?.miningActiveUntil && Date.now() < persisted.miningActiveUntil) {
+      return true;
+    }
+    return false;
+  });
+
   const [totalMined, setTotalMined] = useState(Number(persisted?.coins ?? 0));
   const [baseRate, setBaseRate] = useState(Number(persisted?.baseRate ?? DEFAULT_BASE_RATE));
   const [referrals] = useState(() => persisted?.referrals ?? generateSampleReferrals()); // referrals static for now
