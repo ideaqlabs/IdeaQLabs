@@ -161,7 +161,7 @@ const Home = ({ setCurrentPage, user, onAuthClick }) => {
               onClick={handleGetStarted}
               className="bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900 font-semibold px-8 py-3 text-lg hover-glow"
             >
-              Start Your Journey <ArrowRight className="ml-2 h-5 w-5" />
+              Submit Your Idea <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </motion.div>
         </div>
