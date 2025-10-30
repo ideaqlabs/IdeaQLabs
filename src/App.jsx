@@ -55,7 +55,13 @@ const renderPage = () => {
     case "about":
       return <About />;
     case "earn":
-      return <Earn setCurrentPage={setCurrentPage} />;
+      return (
+        <Earn 
+          setCurrentPage={setCurrentPage} 
+          user={user} 
+          onAuthClick={() => setIsAuthModalOpen(true)} 
+        />
+      );
     case "learn":
       return <Learn />;
     case "mentor":
