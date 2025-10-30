@@ -150,6 +150,7 @@ const Home = ({ setCurrentPage, user, onAuthClick }) => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
+            You have a Idea, but don't have the technical expertise to execute it? 
             Let's discuss how we can bring your vision to life with our innovative solutions.
           </motion.p>
           <motion.div
