@@ -14,14 +14,22 @@ import Profile from "@/components/pages/Profile";
 import Footer from "@/components/Footer";
 import AuthModal from "@/components/AuthModal";
 import { Toaster } from "@/components/ui/toaster";
-import { supabase } from "@/lib/supabaseClient"; // Make sure this exists
+import { supabase } from "@/lib/supabaseClient";
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("home");
+  // ✅ Restore current page from localStorage on load
+  const [currentPage, setCurrentPage] = useState(
+    localStorage.getItem("currentPage") || "home"
+  );
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Check current session on mount
+  // ✅ Persist page change in localStorage
+  useEffect(() => {
+    localStorage.setItem("currentPage", currentPage);
+  }, [currentPage]);
+
+  // ✅ Check current session on mount
   useEffect(() => {
     const fetchSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -30,7 +38,6 @@ function App() {
 
     fetchSession();
 
-    // Listen to auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user || null);
     });
@@ -38,46 +45,60 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  // ✅ Handle sign out and clear all cached data
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    window.history.replaceState({}, document.title, "/"); // Remove any #access_token
+
+    // 🧹 Clear Earn-related local data (username, mining, etc.)
+    localStorage.removeItem("username");
+    localStorage.removeItem("miningData");
+    localStorage.removeItem("referrals");
+
+    // 🧹 Optional: clear everything except currentPage
+    const page = localStorage.getItem("currentPage");
+    localStorage.clear();
+    localStorage.setItem("currentPage", page);
+
+    window.history.replaceState({}, document.title, "/");
   };
 
-const renderPage = () => {
-  switch (currentPage) {
-    case "home":
-      return <Home 
-        setCurrentPage={setCurrentPage} 
-        user={user} 
-        onAuthClick={() => setIsAuthModalOpen(true)} 
-      />;
-    case "about":
-      return <About />;
-    case "earn":
-      return (
-        <Earn 
-          setCurrentPage={setCurrentPage} 
-          user={user} 
-          onAuthClick={() => setIsAuthModalOpen(true)} 
-        />
-      );
-    case "learn":
-      return <Learn />;
-    case "mentor":
-      return <Mentor />;
-    case "products":
-      return <Products />;
-    case "contact":
-      return <Contact />;
-    case "profile":
-      return <Profile user={user} />;
-    case "dashboard":
-      return user ? <Dashboard /> : <Home setCurrentPage={setCurrentPage} />;
-    default:
-      return <Home setCurrentPage={setCurrentPage} />;
-  }
-};
+  const renderPage = () => {
+    switch (currentPage) {
+      case "home":
+        return (
+          <Home
+            setCurrentPage={setCurrentPage}
+            user={user}
+            onAuthClick={() => setIsAuthModalOpen(true)}
+          />
+        );
+      case "about":
+        return <About />;
+      case "earn":
+        return (
+          <Earn
+            setCurrentPage={setCurrentPage}
+            user={user}
+            onAuthClick={() => setIsAuthModalOpen(true)}
+          />
+        );
+      case "learn":
+        return <Learn />;
+      case "mentor":
+        return <Mentor />;
+      case "products":
+        return <Products />;
+      case "contact":
+        return <Contact />;
+      case "profile":
+        return <Profile user={user} />;
+      case "dashboard":
+        return user ? <Dashboard /> : <Home setCurrentPage={setCurrentPage} />;
+      default:
+        return <Home setCurrentPage={setCurrentPage} />;
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -116,7 +137,7 @@ const renderPage = () => {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        setUser={setUser} // Pass setter for AuthModal to update App state
+        setUser={setUser}
       />
 
       <Toaster />
@@ -125,5 +146,3 @@ const renderPage = () => {
 }
 
 export default App;
-
-
