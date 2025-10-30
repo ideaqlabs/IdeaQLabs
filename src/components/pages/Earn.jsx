@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { Copy, Share2, Users, HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Copy, Share2, Users, HelpCircle, Circle } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
+import { toast } from "@/components/ui/use-toast";
 
-const Earn = () => {
+const Earn = ({ user, onAuthClick }) => {
   const [username, setUsername] = useState("");
   const [finalUsername, setFinalUsername] = useState(null);
   const [isMining, setIsMining] = useState(false);
@@ -11,44 +13,107 @@ const Earn = () => {
   const [miningRate, setMiningRate] = useState(10); // base rate
   const [activeReferrals, setActiveReferrals] = useState(5);
   const [totalReferrals, setTotalReferrals] = useState(24);
-  const [startTime, setStartTime] = useState(null);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [viewTeam, setViewTeam] = useState(false);
+  const [referralTeam, setReferralTeam] = useState([
+    { name: "AlphaUser", active: true },
+    { name: "BetaUser", active: false },
+    { name: "GammaUser", active: true },
+    { name: "DeltaUser", active: false },
+  ]);
 
-  // ---- handle mining start ----
-  const handleStartMining = () => {
-    if (!isMining) {
-      setIsMining(true);
-      setVideoPlaying(true);
-      setStartTime(Date.now());
-
-      // Auto-stop after 24h
-      setTimeout(() => {
-        setIsMining(false);
-        setVideoPlaying(false);
-      }, 24 * 60 * 60 * 1000);
+  // ---- Load user data on mount ----
+  useEffect(() => {
+    if (user?.email) {
+      const savedData = JSON.parse(localStorage.getItem(`earnData_${user.email}`));
+      if (savedData) {
+        setFinalUsername(savedData.username || null);
+        setTotalMined(savedData.totalMined || 0);
+      }
     }
-  };
+  }, [user]);
 
-  // ---- simulate mining progress ----
+  // ---- Save mining data persistently ----
+  useEffect(() => {
+    if (user?.email && finalUsername) {
+      localStorage.setItem(
+        `earnData_${user.email}`,
+        JSON.stringify({
+          username: finalUsername,
+          totalMined,
+        })
+      );
+    }
+  }, [user, finalUsername, totalMined]);
+
+  // ---- Mining logic ----
   useEffect(() => {
     if (isMining) {
       const effectiveRate = miningRate * (1 + 0.1 * activeReferrals);
       const interval = setInterval(() => {
-        setTotalMined(prev => prev + effectiveRate / 3600); // per second
+        setTotalMined((prev) => prev + effectiveRate / 3600); // per second
       }, 1000);
       return () => clearInterval(interval);
     }
   }, [isMining, activeReferrals]);
 
-  // ---- handle username select once ----
   const handleUsernameSelect = () => {
+    if (!user) {
+      toast({
+        title: "Please log in to set your username.",
+      });
+      onAuthClick();
+      return;
+    }
     if (!finalUsername && username.trim() !== "") {
       setFinalUsername(username.trim());
+      toast({
+        title: "Username confirmed!",
+        description: "Your username has been linked to your account.",
+      });
+    }
+  };
+
+  const handleStartMining = () => {
+    if (!user) {
+      toast({
+        title: "You must log in first!",
+        description: "Please sign in to start mining.",
+      });
+      onAuthClick();
+      return;
+    }
+    if (!finalUsername) {
+      toast({
+        title: "Set a username first!",
+        description: "You need to confirm your username before mining.",
+      });
+      return;
+    }
+
+    if (!isMining) {
+      setIsMining(true);
+      setVideoPlaying(true);
+      toast({
+        title: "Mining started!",
+        description: "You are now mining IQU for the next 24 hours.",
+      });
+
+      // Stop mining automatically after 24 hours
+      setTimeout(() => {
+        setIsMining(false);
+        setVideoPlaying(false);
+        toast({
+          title: "Mining session ended",
+          description: "Start again to continue mining.",
+        });
+      }, 24 * 60 * 60 * 1000);
     }
   };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(finalUsername);
+    toast({ title: "Copied!", description: "Username copied to clipboard." });
   };
 
   const handleShare = async () => {
@@ -59,14 +124,21 @@ const Earn = () => {
         url: window.location.href,
       });
     } else {
-      alert("Sharing not supported on this device.");
+      toast({ title: "Sharing not supported on this device." });
     }
+  };
+
+  const handlePingInactive = () => {
+    toast({
+      title: "Ping Sent!",
+      description: "Notifications sent to inactive team members.",
+    });
   };
 
   return (
     <div className="min-h-screen py-16 px-6 text-center">
       <motion.h1
-        className="text-5xl font-bold text-yellow-400 mb-8"
+        className="text-4xl md:text-5xl font-bold text-yellow-400 mb-8"
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -107,33 +179,31 @@ const Earn = () => {
 
       {/* Mining Section */}
       <div className="max-w-lg mx-auto bg-slate-800/60 p-8 rounded-2xl shadow-lg border border-slate-700 mb-10">
-        <div className="mb-6">
-          <motion.div
-            animate={{ scale: isMining ? [1, 1.05, 1] : 1 }}
-            transition={{ repeat: isMining ? Infinity : 0, duration: 1.5 }}
+        <motion.div
+          animate={{ scale: isMining ? [1, 1.05, 1] : 1 }}
+          transition={{ repeat: isMining ? Infinity : 0, duration: 1.5 }}
+        >
+          <Button
+            onClick={handleStartMining}
+            disabled={isMining}
+            className={`w-full text-lg font-semibold py-4 ${
+              isMining
+                ? "bg-green-500 cursor-not-allowed"
+                : "bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900"
+            }`}
           >
-            <Button
-              onClick={handleStartMining}
-              disabled={isMining}
-              className={`w-full text-lg font-semibold py-4 ${
-                isMining
-                  ? "bg-green-500 cursor-not-allowed"
-                  : "bg-gradient-to-r from-sky-500 to-yellow-500 hover:from-sky-600 hover:to-yellow-600 text-slate-900"
-              }`}
-            >
-              {isMining ? "Mining in Progress..." : "Start Mining"}
-            </Button>
-          </motion.div>
-        </div>
+            {isMining ? "Mining in Progress..." : "Start Mining"}
+          </Button>
+        </motion.div>
 
-        <div className="text-gray-300 mb-4">
+        <div className="text-gray-300 mt-4">
           Mining Rate:{" "}
           <span className="text-yellow-400 font-semibold">
             {miningRate} IQU/hr + {activeReferrals * 10}% bonus
           </span>
         </div>
 
-        <div className="text-gray-300">
+        <div className="text-gray-300 mt-2">
           Active Referrals:{" "}
           <span className="text-yellow-400 font-semibold">
             {activeReferrals}/{totalReferrals}
@@ -141,7 +211,7 @@ const Earn = () => {
         </div>
       </div>
 
-      {/* Mining Status Section */}
+      {/* Mining Status */}
       <div className="max-w-md mx-auto text-center mb-10">
         <h2 className="text-2xl font-semibold text-white mb-3">Mining Status</h2>
         <div className="text-5xl font-bold text-yellow-400">
@@ -161,10 +231,34 @@ const Earn = () => {
               Active: {activeReferrals}/{totalReferrals}
             </span>
           </div>
-          <Button size="sm" variant="outline">
-            Ping Inactive
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" onClick={() => setViewTeam(!viewTeam)}>
+              {viewTeam ? "Hide Team" : "View Team"}
+            </Button>
+            <Button size="sm" variant="outline" onClick={handlePingInactive}>
+              Ping Inactive
+            </Button>
+          </div>
         </div>
+
+        {viewTeam && (
+          <div className="space-y-2 mt-4 text-left">
+            {referralTeam.map((ref, i) => (
+              <div
+                key={i}
+                className="flex justify-between items-center bg-slate-900/40 px-4 py-2 rounded-lg"
+              >
+                <span className="text-white">{ref.name}</span>
+                <Circle
+                  className={`h-3 w-3 ${
+                    ref.active ? "text-green-400" : "text-gray-500"
+                  }`}
+                  fill={ref.active ? "green" : "gray"}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* FAQ Section */}
@@ -172,7 +266,6 @@ const Earn = () => {
         <h3 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
           <HelpCircle className="h-6 w-6 text-yellow-400" /> FAQ
         </h3>
-
         {[
           "What is IQU?",
           "How do I start mining?",
