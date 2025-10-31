@@ -247,8 +247,69 @@ export default function Earn({ user, onAuthClick }) {
           )}
         </div>
 
-        {/* Referrals + FAQ untouched */}
-        {/* ... (rest same as your current file) ... */}
+        {/* Referral area */}
+        <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 text-slate-300">
+              <Users className="h-5 w-5 text-sky-400" />
+              <div>
+                <div className="text-sm">Referral Team</div>
+                <div className="text-sm text-yellow-400 font-semibold">{String(referrals.filter(r => r.active).length).padStart(2, "0")}/{String(referrals.length).padStart(2,"0")}</div>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setViewTeam(v => !v)}>
+                <span className="block"><span className="inline">View</span><span className="inline ml-1 md:ml-2">Team</span></span>
+              </Button>
+              <Button size="sm" variant="outline" onClick={() => { handlePingInactive(); }} >
+                <span className="block"><span className="inline">Ping</span><span className="inline ml-1 md:ml-2">Inactive</span></span>
+              </Button>
+            </div>
+          </div>
+
+          {viewTeam && (
+            <div className="mt-3 space-y-2 text-left">
+              {referrals.map((r, i) => (
+                <div key={i} className="flex items-center justify-between bg-slate-900/40 p-3 rounded-md">
+                  <div>
+                    <div className="text-white font-medium">{r.name}</div>
+                    <div className="text-xs text-slate-400">{r.username}</div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${r.active ? "bg-emerald-400" : "bg-slate-600"} border border-slate-700`} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* FAQ */}
+        <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 text-left">
+          <div className="flex items-center gap-2 mb-3">
+            <HelpCircle className="h-5 w-5 text-yellow-400" />
+            <h3 className="text-lg font-semibold text-white">FAQ</h3>
+          </div>
+
+          {[
+            { q: "What is IQU?", a: "IQU is a platform currency used for rewards." },
+            { q: "How do I start mining?", a: "Set username (once) and click Start Mining (requires login)." },
+            { q: "When does mining stop?", a: "Mining stops automatically after 24 hours." },
+            { q: "How do referrals help?", a: "Each active referral adds +10% to base rate." },
+            { q: "Can I change my username?", a: "No — username is permanent once confirmed." },
+            { q: "Is mining tracked server-side?", a: "Not yet. We'll add server tracking later." },
+            { q: "Can I mine on multiple devices?", a: "No, Mining is per-account and session-based." },
+            { q: "How do I see history?", a: "Dashboard page will show transaction history soon." },
+            { q: "How to contact support?", a: "Use the support / contact page." },
+            { q: "Is IQU tradable?", a: "Currently it's a platform currency; later we will mint IQU." },
+          ].map((f, idx) => (
+            <details key={idx} className="mb-2 bg-slate-900/40 p-3 rounded-md">
+              <summary className="cursor-pointer text-yellow-400 font-medium">{f.q}</summary>
+              <p className="text-slate-300 mt-2">{f.a}</p>
+            </details>
+          ))}
+        </div>
       </div>
     </div>
   );
