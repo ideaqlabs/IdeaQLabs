@@ -26,12 +26,12 @@ function fmtSeconds(sec) {
 export default function Earn({ user, onAuthClick }) {
   const [storageKey, setStorageKey] = useState(() => getUserStorageKey(user));
 
-  // Reload data when user changes
+  // update key when user changes
   useEffect(() => {
     setStorageKey(getUserStorageKey(user));
   }, [user]);
 
-  // ---- Load persisted data ----
+  // persisted data
   const [persisted, setPersisted] = useState(() => loadStoredData(storageKey));
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameLocked, setUsernameLocked] = useState(persisted?.username ?? null);
@@ -39,7 +39,7 @@ export default function Earn({ user, onAuthClick }) {
     Boolean(persisted?.miningActiveUntil && Date.now() < persisted.miningActiveUntil)
   );
   const [baseRate, setBaseRate] = useState(Number(persisted?.baseRate ?? DEFAULT_BASE_RATE));
-  const [referrals] = useState(() => persisted?.referrals ?? generateSampleReferrals());
+  const [referrals, setReferrals] = useState(() => persisted?.referrals ?? generateSampleReferrals());
   const [viewTeam, setViewTeam] = useState(false);
 
   const [displayCoins, setDisplayCoins] = useState(0);
@@ -47,41 +47,51 @@ export default function Earn({ user, onAuthClick }) {
     calcSecondsLeft(persisted?.miningActiveUntil)
   );
 
-  // 🔁 Load stored data whenever user changes
+  // load when storageKey changes (user signin/out)
   useEffect(() => {
-    const saved = loadStoredData(storageKey);
+    const saved = loadStoredData(storageKey) || loadStoredData(GLOBAL_KEY);
     if (saved) {
       setPersisted(saved);
       setUsernameLocked(saved.username ?? null);
       setIsMining(Boolean(saved.miningActiveUntil && Date.now() < saved.miningActiveUntil));
+      setBaseRate(Number(saved.baseRate ?? DEFAULT_BASE_RATE));
+      setReferrals(saved.referrals ?? generateSampleReferrals());
+      setSecondsLeft(calcSecondsLeft(saved.miningActiveUntil));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [storageKey]);
 
-  // ♻️ Update mining progress dynamically (time-based)
+  // mining progress updater (time-based)
   useEffect(() => {
-    const updateMiningProgress = () => {
+    function updateMiningProgress() {
       const raw = localStorage.getItem(storageKey);
       const parsed = raw ? JSON.parse(raw) : persisted;
-      if (!parsed?.miningStartTime || !parsed?.miningActiveUntil) return;
+      if (!parsed?.miningStartTime || !parsed?.miningActiveUntil) {
+        setDisplayCoins(0);
+        setSecondsLeft(0);
+        return;
+      }
 
       const now = Date.now();
       const elapsedSec = Math.min((now - parsed.miningStartTime) / 1000, MINING_SECONDS);
-      const activeReferrals = parsed?.referrals?.filter((r) => r.active).length || 0;
-      const effectiveRate = (parsed?.baseRate ?? baseRate) * (1 + 0.1 * activeReferrals);
+      const activeReferrals = (parsed.referrals || []).filter((r) => r.active).length;
+      const effectiveRate = (parsed.baseRate ?? baseRate) * (1 + 0.1 * activeReferrals);
       const mined = (effectiveRate * elapsedSec) / 3600;
 
       setDisplayCoins(Number(mined.toFixed(8)));
       setSecondsLeft(calcSecondsLeft(parsed.miningActiveUntil));
 
-      if (now >= parsed.miningActiveUntil) setIsMining(false);
-    };
+      if (now >= parsed.miningActiveUntil) {
+        setIsMining(false);
+      }
+    }
 
     updateMiningProgress();
-    const interval = setInterval(updateMiningProgress, 1000);
-    return () => clearInterval(interval);
+    const t = setInterval(updateMiningProgress, 1000);
+    return () => clearInterval(t);
   }, [storageKey, baseRate, referrals, persisted]);
 
-  // 💾 Persist every relevant change (also keep a global backup)
+  // persist important fields (keep global backup)
   useEffect(() => {
     const toSave = {
       username: usernameLocked ?? persisted?.username ?? null,
@@ -91,37 +101,54 @@ export default function Earn({ user, onAuthClick }) {
       referrals,
     };
     saveToStorage(storageKey, toSave);
-    saveToStorage(GLOBAL_KEY, toSave); // backup globally too
+    saveToStorage(GLOBAL_KEY, toSave);
   }, [storageKey, usernameLocked, baseRate, referrals, persisted]);
 
-  // --- Handlers ---
+  // helpers
   function isLoggedIn() {
     return Boolean(user && (user.id || user.email || user.user_metadata?.email));
   }
 
   function handleConfirmUsername() {
+    if (!isLoggedIn()) {
+      toast({ title: "Please log in to set your username." });
+      onAuthClick?.();
+      return;
+    }
     const uname = usernameInput.trim();
     if (!uname || uname.length < 3) {
       toast({ title: "Choose a username (min 3 chars)." });
       return;
     }
-    setUsernameLocked(uname);
-    persistUsername(uname);
-    toast({ title: `Username "${uname}" saved.` });
-  }
+    if (usernameLocked) {
+      toast({ title: "Username already set — cannot change." });
+      return;
+    }
 
-  function persistUsername(uname) {
+    setUsernameLocked(uname);
     const key = getUserStorageKey(user);
-    const current = loadStoredData(key) || {};
-    const updated = { ...current, username: uname };
+    const raw = loadStoredData(key) || {};
+    const updated = { ...raw, username: uname, baseRate, referrals, miningStartTime: raw.miningStartTime, miningActiveUntil: raw.miningActiveUntil };
     saveToStorage(key, updated);
     saveToStorage(GLOBAL_KEY, updated);
     setPersisted(updated);
+    toast({ title: `Username "${uname}" saved.` });
   }
 
   function handleStartMining() {
-    if (!usernameLocked) return toast({ title: "Set your username first." });
-    if (isMining) return toast({ title: "Mining already active." });
+    if (!isLoggedIn()) {
+      toast({ title: "Please log in first." });
+      onAuthClick?.();
+      return;
+    }
+    if (!usernameLocked) {
+      toast({ title: "Set your username first." });
+      return;
+    }
+    if (isMining) {
+      toast({ title: "Mining already active." });
+      return;
+    }
 
     const now = Date.now();
     const until = now + MINING_SECONDS * 1000;
@@ -141,8 +168,10 @@ export default function Earn({ user, onAuthClick }) {
 
   function handleCopyUsername() {
     if (!usernameLocked) return toast({ title: "No username to copy." });
-    navigator.clipboard.writeText(usernameLocked);
-    toast({ title: "Username copied!" });
+    navigator.clipboard.writeText(usernameLocked).then(
+      () => toast({ title: "Username copied!" }),
+      () => toast({ title: "Copy failed." })
+    );
   }
 
   async function handleShareUsername() {
@@ -153,22 +182,22 @@ export default function Earn({ user, onAuthClick }) {
         await navigator.share({ title: "IdeaQ Referral", text });
       } catch {}
     } else {
-      navigator.clipboard.writeText(text);
-      toast({ title: "Share text copied." });
+      navigator.clipboard.writeText(text).then(() => toast({ title: "Share text copied." }));
     }
   }
 
-  // small handler (was referenced but missing)
   function handlePingInactive() {
     toast({ title: "Ping sent to inactive members (simulated)." });
   }
 
-  // ----- compute effective mining rate here (safe for build) -----
+  // compute effective values for rendering (no IIFEs in JSX)
   const activeReferralsCount = referrals.filter((r) => r.active).length;
+  const referralBoostNumber = baseRate * 0.1 * activeReferralsCount; // e.g., 0.5
   const effectiveRateNumber = baseRate * (1 + 0.1 * activeReferralsCount);
+  const referralBoostDisplay = referralBoostNumber.toFixed(2);
   const effectiveRateDisplay = effectiveRateNumber.toFixed(3);
 
-  // --- UI ---
+  // UI
   return (
     <div className="min-h-screen py-12 px-6">
       <div className="max-w-2xl mx-auto text-center">
@@ -199,19 +228,12 @@ export default function Earn({ user, onAuthClick }) {
         ) : (
           <div className="mb-6 flex items-center justify-center gap-3">
             <div className="text-white font-medium">
-              Username:{" "}
-              <span className="text-yellow-400 font-semibold">{usernameLocked}</span>
+              Username: <span className="text-yellow-400 font-semibold">{usernameLocked}</span>
             </div>
-            <button
-              onClick={handleCopyUsername}
-              className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
-            >
+            <button onClick={handleCopyUsername} className="p-2 bg-slate-800/50 rounded-md border border-slate-700">
               <Copy className="h-4 w-4 text-sky-400" />
             </button>
-            <button
-              onClick={handleShareUsername}
-              className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
-            >
+            <button onClick={handleShareUsername} className="p-2 bg-slate-800/50 rounded-md border border-slate-700">
               <Share2 className="h-4 w-4 text-yellow-400" />
             </button>
           </div>
@@ -219,59 +241,32 @@ export default function Earn({ user, onAuthClick }) {
 
         {/* Mining Section */}
         <div className="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 mb-6">
-          <motion.div
-            animate={{ scale: isMining ? [1, 1.04, 1] : 1 }}
-            transition={{ repeat: isMining ? Infinity : 0, duration: 1.5 }}
-          >
+          <motion.div animate={{ scale: isMining ? [1, 1.04, 1] : 1 }} transition={{ repeat: isMining ? Infinity : 0, duration: 1.5 }}>
             <Button
               onClick={handleStartMining}
               disabled={isMining}
-              className={`w-full py-3 text-lg font-semibold ${
-                isMining
-                  ? "bg-emerald-500 cursor-not-allowed"
-                  : "bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900"
-              }`}
+              className={`w-full py-3 text-lg font-semibold ${isMining ? "bg-emerald-500 cursor-not-allowed" : "bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900"}`}
             >
               {isMining ? "Mining in Progress..." : "Start Mining (24h)"}
             </Button>
           </motion.div>
 
-          {/* Effective Mining Rate Display */}
-          {(() => {
-            const activeReferrals = referrals.filter((r) => r.active).length;
-            const base = baseRate.toFixed(2);
-            const referralBoost = (baseRate * 0.1 * activeReferrals).toFixed(2);
-            const effectiveRate = (baseRate * (1 + 0.1 * activeReferrals)).toFixed(3);
+          {/* Effective Mining Rate Display (precomputed variables) */}
+          <div className="mt-4 text-slate-300 text-sm">
+            <div>
+              Mining Rate: <span className="text-yellow-400 font-semibold">{effectiveRateDisplay} IQU/hr</span>
+            </div>
 
-            return (
-              <div className="mt-4 text-slate-300 text-sm">
-                <div>
-                  Mining Rate:{" "}
-                  <span className="text-yellow-400 font-semibold">
-                    {effectiveRate} IQU/hr
-                  </span>
-                </div>
-
-                <div className="text-slate-500 text-xs mt-1 italic">
-                  (Base Mining Rate:{" "}
-                  <span className="text-slate-400">{base} IQU/hr</span>)
-                  {"  +  "}
-                  Active Referral Boost{" "}
-                  <span className="text-slate-400">
-                    (10% ×{" "}
-                    <span className="text-yellow-300 font-semibold">
-                      {activeReferrals}
-                    </span>{" "}
-                    ={" "}
-                    <span className="text-yellow-300 font-semibold">
-                      {referralBoost} IQU/hr
-                    </span>
-                    )
-                  </span>
-                </div>
-              </div>
-  );
-})()}
+            <div className="text-slate-500 text-xs mt-1 italic">
+              (Base Mining Rate: <span className="text-slate-400">{baseRate.toFixed(2)} IQU/hr</span>){" "}
+              + Active Referral Boost{" "}
+              <span className="text-slate-400">
+                (10% × <span className="text-yellow-300 font-semibold">{activeReferralsCount}</span> ={" "}
+                <span className="text-yellow-300 font-semibold">{referralBoostDisplay} IQU/hr</span>)
+              </span>
+            </div>
+          </div>
+        </div>
 
         {/* Mining Status */}
         <div className="mb-6">
@@ -281,8 +276,7 @@ export default function Earn({ user, onAuthClick }) {
           </div>
           {isMining && (
             <div className="mt-3 text-slate-400 text-lg font-mono">
-              Time Left:{" "}
-              <span className="text-yellow-300">{fmtSeconds(secondsLeft)}</span>
+              Time Left: <span className="text-yellow-300">{fmtSeconds(secondsLeft)}</span>
             </div>
           )}
         </div>
@@ -294,10 +288,7 @@ export default function Earn({ user, onAuthClick }) {
               <Users className="h-5 w-5 text-sky-400" />
               <div>
                 <div className="text-sm">Referral Team</div>
-                <div className="text-sm text-yellow-400 font-semibold">
-                  {String(referrals.filter((r) => r.active).length).padStart(2, "0")}/
-                  {String(referrals.length).padStart(2, "0")}
-                </div>
+                <div className="text-sm text-yellow-400 font-semibold">{String(referrals.filter((r) => r.active).length).padStart(2, "0")}/{String(referrals.length).padStart(2, "0")}</div>
               </div>
             </div>
 
@@ -305,7 +296,7 @@ export default function Earn({ user, onAuthClick }) {
               <Button size="sm" variant="outline" onClick={() => setViewTeam((v) => !v)}>
                 <span className="block"><span className="inline">View</span><span className="inline ml-1 md:ml-2">Team</span></span>
               </Button>
-              <Button size="sm" variant="outline" onClick={() => { handlePingInactive(); }} >
+              <Button size="sm" variant="outline" onClick={() => handlePingInactive()}>
                 <span className="block"><span className="inline">Ping</span><span className="inline ml-1 md:ml-2">Inactive</span></span>
               </Button>
             </div>
@@ -358,7 +349,7 @@ export default function Earn({ user, onAuthClick }) {
   );
 }
 
-// 🔧 Helper functions
+// helpers
 function loadStoredData(key) {
   try {
     const raw = localStorage.getItem(key);
