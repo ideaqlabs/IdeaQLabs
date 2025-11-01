@@ -236,33 +236,42 @@ export default function Earn({ user, onAuthClick }) {
             </Button>
           </motion.div>
 
-          {/* Effective Mining Rate Display (render with full calculation) */}
-          <div className="mt-4 text-slate-300 text-sm">
-            <div>
-              Mining Rate:{" "}
-              <span className="text-yellow-400 font-semibold">
-                {effectiveRateDisplay} IQU/hr
-              </span>
-            </div>
+          {/* Effective Mining Rate Display */}
+          {(() => {
+            const activeReferrals = referrals.filter((r) => r.active).length;
+            const base = baseRate.toFixed(2);
+            const referralBoost = (baseRate * 0.1 * activeReferrals).toFixed(2);
+            const effectiveRate = (baseRate * (1 + 0.1 * activeReferrals)).toFixed(3);
 
-            <div className="text-slate-500 text-xs mt-1 italic">
-              (Base Mining Rate:{" "}
-              <span className="text-slate-400">{baseRate.toFixed(2)} IQU/hr</span>)
-              {"  +  "}
-              Active Referral Boost{" "}
-              <span className="text-slate-400">
-                (10% ×{" "}
-                <span className="text-yellow-300 font-semibold">
-                  {activeReferralsCount}
-                </span>{" "}
-                ={" "}
-                <span className="text-yellow-300 font-semibold">
-                  {(baseRate * 0.1 * activeReferralsCount).toFixed(2)} IQU/hr
-                </span>
-                )
-              </span>
-            </div>
-          </div>
+            return (
+              <div className="mt-4 text-slate-300 text-sm">
+                <div>
+                  Mining Rate:{" "}
+                  <span className="text-yellow-400 font-semibold">
+                    {effectiveRate} IQU/hr
+                  </span>
+                </div>
+
+                <div className="text-slate-500 text-xs mt-1 italic">
+                  (Base Mining Rate:{" "}
+                  <span className="text-slate-400">{base} IQU/hr</span>)
+                  {"  +  "}
+                  Active Referral Boost{" "}
+                  <span className="text-slate-400">
+                    (10% ×{" "}
+                    <span className="text-yellow-300 font-semibold">
+                      {activeReferrals}
+                    </span>{" "}
+                    ={" "}
+                    <span className="text-yellow-300 font-semibold">
+                      {referralBoost} IQU/hr
+                    </span>
+                    )
+                  </span>
+                </div>
+              </div>
+  );
+})()}
 
         {/* Mining Status */}
         <div className="mb-6">
