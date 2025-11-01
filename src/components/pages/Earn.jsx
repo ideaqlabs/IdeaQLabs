@@ -300,7 +300,9 @@ export default function Earn({ user, onAuthClick }) {
                   <span className="text-yellow-400 font-semibold">{effectiveRateDisplay} IQU/hr</span>
                 </div>
                 <div className="text-slate-500 text-xs mt-1 italic">
-                  (Base: {baseRate.toFixed(2)} IQU/hr + Referral Boost: {referralBoostDisplay} IQU/hr)
+                  (Base Rate: <span className="text-slate-400">{baseRate.toFixed(2)} IQU/hr</span>) + Active Referral Boost{" "}
+                  <span className="text-slate-400">(10% × <span className="text-yellow-400">{activeReferralsCount}</span> ={" "}
+                    <span className="text-yellow-400">{referralBoostDisplay} IQU/hr</span>)</span>
                 </div>
               </div>
             </div>
