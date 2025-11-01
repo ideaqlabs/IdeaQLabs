@@ -310,23 +310,6 @@ export default function Earn({ user, onAuthClick }) {
               )}
             </div>
 
-            {/* Referral + FAQ Sections (unchanged, same as before) */}
-          </>
-        ) : (
-          <div className="mb-6 p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-slate-300">
-            <p className="mb-3 text-lg">Please log in to access your mining dashboard.</p>
-            <Button
-              onClick={onAuthClick}
-              className="bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
-            >
-              Log In
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
        {/* Referral area */}
         <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 mb-8">
