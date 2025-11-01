@@ -247,7 +247,7 @@ export default function Earn({ user, onAuthClick }) {
 
             <div className="text-slate-500 text-xs mt-1 italic">
               (Base mining rate:{" "}
-              <span className="text-slate-300">{baseRate.toFixed(2)} IQU/hr</span>)
+              <span className="text-slate-400">{baseRate.toFixed(2)} IQU/hr</span>)
               {"  +  "}
               Referral Boost (10% ×{" "}
               <span className="text-yellow-300 font-semibold">
