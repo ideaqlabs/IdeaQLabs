@@ -209,17 +209,6 @@ export default function Earn({ user, onAuthClick }) {
           IQU Mining
         </motion.h1>
 
-return (
-  <div className="min-h-screen py-12 px-6">
-    <div className="max-w-2xl mx-auto text-center">
-      <motion.h1
-        className="text-3xl md:text-4xl font-bold text-yellow-400 mb-6"
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        IQU Mining
-      </motion.h1>
-
       {/* 🔒 Conditional Render based on login */}
       {isLoggedIn() ? (
         <>
