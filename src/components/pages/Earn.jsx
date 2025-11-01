@@ -57,7 +57,7 @@ export default function Earn({ user, onAuthClick }) {
     }
   }, [storageKey]);
 
-  // ♻️ Update mining progress dynamically
+  // ♻️ Update mining progress dynamically (time-based)
   useEffect(() => {
     const updateMiningProgress = () => {
       const raw = localStorage.getItem(storageKey);
@@ -79,9 +79,9 @@ export default function Earn({ user, onAuthClick }) {
     updateMiningProgress();
     const interval = setInterval(updateMiningProgress, 1000);
     return () => clearInterval(interval);
-  }, [storageKey, baseRate, referrals]);
+  }, [storageKey, baseRate, referrals, persisted]);
 
-  // 💾 Persist every relevant change
+  // 💾 Persist every relevant change (also keep a global backup)
   useEffect(() => {
     const toSave = {
       username: usernameLocked ?? persisted?.username ?? null,
@@ -158,6 +158,16 @@ export default function Earn({ user, onAuthClick }) {
     }
   }
 
+  // small handler (was referenced but missing)
+  function handlePingInactive() {
+    toast({ title: "Ping sent to inactive members (simulated)." });
+  }
+
+  // ----- compute effective mining rate here (safe for build) -----
+  const activeReferralsCount = referrals.filter((r) => r.active).length;
+  const effectiveRateNumber = baseRate * (1 + 0.1 * activeReferralsCount);
+  const effectiveRateDisplay = effectiveRateNumber.toFixed(3);
+
   // --- UI ---
   return (
     <div className="min-h-screen py-12 px-6">
@@ -226,33 +236,27 @@ export default function Earn({ user, onAuthClick }) {
             </Button>
           </motion.div>
 
-          {/* Effective Mining Rate Display */}
-          {(() => {
-            const activeReferrals = referrals.filter((r) => r.active).length;
-            const effectiveRate = (baseRate * (1 + 0.1 * activeReferrals)).toFixed(3);
+          {/* Effective Mining Rate Display (render plain variables only) */}
+          <div className="mt-4 text-slate-300 text-sm">
+            <div>
+              Effective Mining Rate:{" "}
+              <span className="text-yellow-400 font-semibold">
+                {effectiveRateDisplay} IQU/hr
+              </span>
+            </div>
 
-            return (
-              <div className="mt-4 text-slate-300 text-sm">
-                <div>
-                  Effective Mining Rate:{" "}
-                  <span className="text-yellow-400 font-semibold">
-                    {effectiveRate} IQU/hr
-                  </span>
-                </div>
-
-                <div className="text-slate-500 text-xs mt-1 italic">
-                  (Base mining rate:{" "}
-                  <span className="text-slate-300">{baseRate.toFixed(2)} IQU/hr</span>)
-                  {"  +  "}
-                  Referral Boost (10% ×{" "}
-                  <span className="text-yellow-300 font-semibold">
-                    {activeReferrals}
-                  </span>{" "}
-                  active member{activeReferrals === 1 ? "" : "s"})
-                </div>
-              </div>
-            );
-          })()}
+            <div className="text-slate-500 text-xs mt-1 italic">
+              (Base mining rate:{" "}
+              <span className="text-slate-300">{baseRate.toFixed(2)} IQU/hr</span>)
+              {"  +  "}
+              Referral Boost (10% ×{" "}
+              <span className="text-yellow-300 font-semibold">
+                {activeReferralsCount}
+              </span>{" "}
+              active member{activeReferralsCount === 1 ? "" : "s"})
+            </div>
+          </div>
+        </div>
 
         {/* Mining Status */}
         <div className="mb-6">
@@ -275,12 +279,15 @@ export default function Earn({ user, onAuthClick }) {
               <Users className="h-5 w-5 text-sky-400" />
               <div>
                 <div className="text-sm">Referral Team</div>
-                <div className="text-sm text-yellow-400 font-semibold">{String(referrals.filter(r => r.active).length).padStart(2, "0")}/{String(referrals.length).padStart(2,"0")}</div>
+                <div className="text-sm text-yellow-400 font-semibold">
+                  {String(referrals.filter((r) => r.active).length).padStart(2, "0")}/
+                  {String(referrals.length).padStart(2, "0")}
+                </div>
               </div>
             </div>
 
             <div className="flex gap-2">
-              <Button size="sm" variant="outline" onClick={() => setViewTeam(v => !v)}>
+              <Button size="sm" variant="outline" onClick={() => setViewTeam((v) => !v)}>
                 <span className="block"><span className="inline">View</span><span className="inline ml-1 md:ml-2">Team</span></span>
               </Button>
               <Button size="sm" variant="outline" onClick={() => { handlePingInactive(); }} >
@@ -366,3 +373,4 @@ function calcSecondsLeft(until) {
   if (!until) return 0;
   return Math.max(0, Math.floor((until - Date.now()) / 1000));
 }
+
