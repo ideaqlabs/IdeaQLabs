@@ -236,27 +236,33 @@ export default function Earn({ user, onAuthClick }) {
             </Button>
           </motion.div>
 
-          {/* Effective Mining Rate Display (render plain variables only) */}
+          {/* Effective Mining Rate Display (render with full calculation) */}
           <div className="mt-4 text-slate-300 text-sm">
             <div>
-              Effective Mining Rate:{" "}
+              Mining Rate:{" "}
               <span className="text-yellow-400 font-semibold">
                 {effectiveRateDisplay} IQU/hr
               </span>
             </div>
 
             <div className="text-slate-500 text-xs mt-1 italic">
-              (Base mining rate:{" "}
+              (Base Mining Rate:{" "}
               <span className="text-slate-400">{baseRate.toFixed(2)} IQU/hr</span>)
               {"  +  "}
-              Referral Boost (10% ×{" "}
-              <span className="text-yellow-300 font-semibold">
-                {activeReferralsCount}
-              </span>{" "}
-              active member{activeReferralsCount === 1 ? "" : "s"})
+              Active Referral Boost{" "}
+              <span className="text-slate-400">
+                (10% ×{" "}
+                <span className="text-yellow-300 font-semibold">
+                  {activeReferralsCount}
+                </span>{" "}
+                ={" "}
+                <span className="text-yellow-300 font-semibold">
+                  {(baseRate * 0.1 * activeReferralsCount).toFixed(2)} IQU/hr
+                </span>
+                )
+              </span>
             </div>
           </div>
-        </div>
 
         {/* Mining Status */}
         <div className="mb-6">
