@@ -210,58 +210,58 @@ export default function Earn({ user, onAuthClick }) {
         </motion.h1>
 
         {/* 🔒 If user not logged in — show login prompt */}
-{!isLoggedIn() ? (
-  <div className="mb-6 p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-slate-300">
-    <p className="mb-3 text-lg">
-      Please log in to access your mining dashboard.
-    </p>
-    <Button
-      onClick={onAuthClick}
-      className="bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
-    >
-      Log In
-    </Button>
-  </div>
-) : (
-  <>
-    {/* ✅ Username Section */}
-    {!usernameLocked ? (
-      <div className="mb-6">
-        <input
-          value={usernameInput}
-          onChange={(e) => setUsernameInput(e.target.value)}
-          placeholder="Choose your unique username (min 3 chars)"
-          className="w-full p-3 rounded-lg bg-slate-800 text-white border border-slate-700 mb-3"
-        />
-        <Button
-          onClick={handleConfirmUsername}
-          className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
-        >
-          Confirm Username
-        </Button>
-      </div>
-    ) : (
-      <div className="mb-6 flex items-center justify-center gap-3">
-        <div className="text-white font-medium">
-          Username:{" "}
-          <span className="text-yellow-400 font-semibold">
-            {usernameLocked}
-          </span>
-        </div>
-        <button
-          onClick={handleCopyUsername}
-          className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
-        >
-          <Copy className="h-4 w-4 text-sky-400" />
-        </button>
-        <button
-          onClick={handleShareUsername}
-          className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
-        >
-          <Share2 className="h-4 w-4 text-yellow-400" />
-        </button>
-      </div>
-    )}
+          {!isLoggedIn() ? (
+            <div className="mb-6 p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-slate-300">
+              <p className="mb-3 text-lg">
+                Please log in to access your mining dashboard.
+              </p>
+              <Button
+                onClick={onAuthClick}
+                className="bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
+              >
+                Log In
+              </Button>
+            </div>
+          ) : (
+            <>
+              {/* ✅ Username Section */}
+              {!usernameLocked ? (
+                <div className="mb-6">
+                  <input
+                    value={usernameInput}
+                    onChange={(e) => setUsernameInput(e.target.value)}
+                    placeholder="Choose your unique username (min 3 chars)"
+                    className="w-full p-3 rounded-lg bg-slate-800 text-white border border-slate-700 mb-3"
+                  />
+                  <Button
+                    onClick={handleConfirmUsername}
+                    className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
+                  >
+                    Confirm Username
+                  </Button>
+                </div>
+              ) : (
+                <div className="mb-6 flex items-center justify-center gap-3">
+                  <div className="text-white font-medium">
+                    Username:{" "}
+                    <span className="text-yellow-400 font-semibold">
+                      {usernameLocked}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleCopyUsername}
+                    className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
+                  >
+                    <Copy className="h-4 w-4 text-sky-400" />
+                  </button>
+                  <button
+                    onClick={handleShareUsername}
+                    className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
+                  >
+                    <Share2 className="h-4 w-4 text-yellow-400" />
+                  </button>
+                </div>
+              )}
       
         {/* Mining section unchanged */}
         <div className="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 mb-6">
