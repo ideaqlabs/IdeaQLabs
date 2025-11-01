@@ -167,7 +167,7 @@ export default function Earn({ user, onAuthClick }) {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          Start Mining IQU
+          IQU Mining
         </motion.h1>
 
         {/* Username Section */}
