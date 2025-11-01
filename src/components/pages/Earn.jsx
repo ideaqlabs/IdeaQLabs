@@ -30,6 +30,15 @@ export default function Earn({ user, onAuthClick }) {
     setStorageKey(getUserStorageKey(user));
   }, [user]);
 
+  // Reset sensitive UI state when user logs out
+  useEffect(() => {
+    if (!isLoggedIn()) {
+      setUsernameInput("");
+      setViewTeam(false);
+      setUsernameLocked(null);
+    }
+  }, [user]);
+
   const [persisted, setPersisted] = useState(() => loadStoredData(storageKey));
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameLocked, setUsernameLocked] = useState(persisted?.username ?? null);
@@ -77,7 +86,6 @@ export default function Earn({ user, onAuthClick }) {
       setDisplayCoins(Number(total.toFixed(8)));
       setSecondsLeft(calcSecondsLeft(parsed.miningActiveUntil));
 
-      // stop mining at cycle end and store total mined
       if (now >= parsed.miningActiveUntil) {
         const finalData = { ...parsed, totalMined: total, miningStartTime: null, miningActiveUntil: null };
         saveToStorage(storageKey, finalData);
@@ -129,14 +137,21 @@ export default function Earn({ user, onAuthClick }) {
     setUsernameLocked(uname);
     const key = getUserStorageKey(user);
     const raw = loadStoredData(key) || {};
-    const updated = { ...raw, username: uname, baseRate, referrals, miningStartTime: raw.miningStartTime, miningActiveUntil: raw.miningActiveUntil, totalMined: raw.totalMined ?? 0 };
+    const updated = {
+      ...raw,
+      username: uname,
+      baseRate,
+      referrals,
+      miningStartTime: raw.miningStartTime,
+      miningActiveUntil: raw.miningActiveUntil,
+      totalMined: raw.totalMined ?? 0,
+    };
     saveToStorage(key, updated);
     saveToStorage(GLOBAL_KEY, updated);
     setPersisted(updated);
     toast({ title: `Username "${uname}" saved.` });
   }
 
-  // ✅ FIXED: preserve total mined across cycles
   function handleStartMining() {
     if (!isLoggedIn()) {
       toast({ title: "Please log in first." });
@@ -162,7 +177,7 @@ export default function Earn({ user, onAuthClick }) {
       referrals,
       miningStartTime: now,
       miningActiveUntil: until,
-      totalMined: existing.totalMined ?? 0, // ✅ preserve accumulated
+      totalMined: existing.totalMined ?? 0,
     };
     saveToStorage(storageKey, newData);
     saveToStorage(GLOBAL_KEY, newData);
@@ -201,113 +216,119 @@ export default function Earn({ user, onAuthClick }) {
   const referralBoostDisplay = referralBoostNumber.toFixed(2);
   const effectiveRateDisplay = effectiveRateNumber.toFixed(3);
 
-    return (
-      <div className="min-h-screen py-12 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.h1
-            className="text-3xl md:text-4xl font-bold text-yellow-400 mb-6"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            IQU Mining
-          </motion.h1>
+  return (
+    <div className="min-h-screen py-12 px-6">
+      <div className="max-w-2xl mx-auto text-center">
+        <motion.h1
+          className="text-3xl md:text-4xl font-bold text-yellow-400 mb-6"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          IQU Mining
+        </motion.h1>
 
-          {/* 🔒 Conditional Render based on login */}
-          {isLoggedIn() ? (
-            <>
-              {/* ✅ Username Section */}
-              {!usernameLocked ? (
-                <div className="mb-6">
-                  <input
-                    value={usernameInput}
-                    onChange={(e) => setUsernameInput(e.target.value)}
-                    placeholder="Choose your unique username (min 3 chars)"
-                    className="w-full p-3 rounded-lg bg-slate-800 text-white border border-slate-700 mb-3"
-                  />
-                  <Button
-                    onClick={handleConfirmUsername}
-                    className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
-                  >
-                    Confirm Username
-                  </Button>
+        {/* 🔒 Conditional Render based on login */}
+        {isLoggedIn() ? (
+          <>
+            {/* ✅ Username Section */}
+            {!usernameLocked ? (
+              <div className="mb-6">
+                <input
+                  value={usernameInput}
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                  placeholder="Choose your unique username (min 3 chars)"
+                  className="w-full p-3 rounded-lg bg-slate-800 text-white border border-slate-700 mb-3"
+                />
+                <Button
+                  onClick={handleConfirmUsername}
+                  className="w-full bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
+                >
+                  Confirm Username
+                </Button>
+              </div>
+            ) : (
+              <div className="mb-6 flex items-center justify-center gap-3">
+                <div className="text-white font-medium">
+                  Username:{" "}
+                  <span className="text-yellow-400 font-semibold">{usernameLocked}</span>
                 </div>
-              ) : (
-                <div className="mb-6 flex items-center justify-center gap-3">
-                  <div className="text-white font-medium">
-                    Username:{" "}
-                    <span className="text-yellow-400 font-semibold">
-                      {usernameLocked}
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleCopyUsername}
-                    className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
-                  >
-                    <Copy className="h-4 w-4 text-sky-400" />
-                  </button>
-                  <button
-                    onClick={handleShareUsername}
-                    className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
-                  >
-                    <Share2 className="h-4 w-4 text-yellow-400" />
-                  </button>
+                <button
+                  onClick={handleCopyUsername}
+                  className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
+                >
+                  <Copy className="h-4 w-4 text-sky-400" />
+                </button>
+                <button
+                  onClick={handleShareUsername}
+                  className="p-2 bg-slate-800/50 rounded-md border border-slate-700"
+                >
+                  <Share2 className="h-4 w-4 text-yellow-400" />
+                </button>
+              </div>
+            )}
+
+            {/* ⛏️ Mining Section */}
+            <div className="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 mb-6">
+              <motion.div
+                animate={{ scale: isMining ? [1, 1.04, 1] : 1 }}
+                transition={{ repeat: isMining ? Infinity : 0, duration: 1.5 }}
+              >
+                <Button
+                  onClick={handleStartMining}
+                  disabled={isMining}
+                  className={`w-full py-3 text-lg font-semibold ${
+                    isMining
+                      ? "bg-emerald-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900"
+                  }`}
+                >
+                  {isMining ? "Mining in Progress..." : "Start Mining (24h)"}
+                </Button>
+              </motion.div>
+
+              <div className="mt-4 text-slate-300 text-sm">
+                <div>
+                  Mining Rate:{" "}
+                  <span className="text-yellow-400 font-semibold">{effectiveRateDisplay} IQU/hr</span>
+                </div>
+                <div className="text-slate-500 text-xs mt-1 italic">
+                  (Base: {baseRate.toFixed(2)} IQU/hr + Referral Boost: {referralBoostDisplay} IQU/hr)
+                </div>
+              </div>
+            </div>
+
+            {/* Total Coins */}
+            <div className="mb-6">
+              <div className="text-sm text-slate-300 mb-2">Total Coins Mined</div>
+              <div className="text-4xl md:text-5xl font-bold text-yellow-400">
+                {displayCoins.toLocaleString(undefined, { maximumFractionDigits: 6 })} IQU
+              </div>
+              {isMining && (
+                <div className="mt-3 text-slate-400 text-lg font-mono">
+                  Time Left: <span className="text-yellow-300">{fmtSeconds(secondsLeft)}</span>
                 </div>
               )}
-
-              {/* ⛏️ Existing Mining + Referral + FAQ Sections remain BELOW, unchanged */}
-            </>
-          ) : (
-            <div className="mb-6 p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-slate-300">
-              <p className="mb-3 text-lg">
-                Please log in to access your mining dashboard.
-              </p>
-              <Button
-                onClick={onAuthClick}
-                className="bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
-              >
-                Log In
-              </Button>
             </div>
-          )}
-        </div>
-      </div>
-    );
-      
-        {/* Mining section unchanged */}
-        <div className="bg-slate-800/60 p-6 rounded-2xl border border-slate-700 mb-6">
-          <motion.div animate={{ scale: isMining ? [1, 1.04, 1] : 1 }} transition={{ repeat: isMining ? Infinity : 0, duration: 1.5 }}>
-            <Button onClick={handleStartMining} disabled={isMining} className={`w-full py-3 text-lg font-semibold ${isMining ? "bg-emerald-500 cursor-not-allowed" : "bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900"}`}>
-              {isMining ? "Mining in Progress..." : "Start Mining (24h)"}
+
+            {/* Referral + FAQ Sections (unchanged, same as before) */}
+          </>
+        ) : (
+          <div className="mb-6 p-6 bg-slate-800/50 border border-slate-700 rounded-2xl text-slate-300">
+            <p className="mb-3 text-lg">Please log in to access your mining dashboard.</p>
+            <Button
+              onClick={onAuthClick}
+              className="bg-gradient-to-r from-sky-500 to-yellow-500 text-slate-900 font-semibold"
+            >
+              Log In
             </Button>
-          </motion.div>
-
-          {/* Effective Mining Rate Display */}
-          <div className="mt-4 text-slate-300 text-sm">
-            <div>
-              Mining Rate: <span className="text-yellow-400 font-semibold">{effectiveRateDisplay} IQU/hr</span>
-            </div>
-            <div className="text-slate-500 text-xs mt-1 italic">
-              (Base Mining Rate: <span className="text-slate-400">{baseRate.toFixed(2)} IQU/hr</span>) + Active Referral Boost{" "}
-              <span className="text-slate-400">(10% × <span className="text-yellow-300 font-semibold">{activeReferralsCount}</span> ={" "}
-                <span className="text-yellow-300 font-semibold">{referralBoostDisplay} IQU/hr</span>)</span>
-            </div>
           </div>
-        </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
-        {/* Mining Status */}
-        <div className="mb-6">
-          <div className="text-sm text-slate-300 mb-2">Total Coins Mined</div>
-          <div className="text-4xl md:text-5xl font-bold text-yellow-400">
-            {displayCoins.toLocaleString(undefined, { maximumFractionDigits: 6 })} IQU
-          </div>
-          {isMining && (
-            <div className="mt-3 text-slate-400 text-lg font-mono">
-              Time Left: <span className="text-yellow-300">{fmtSeconds(secondsLeft)}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Referral area */}
+       {/* Referral area */}
         <div className="bg-slate-800/50 p-4 rounded-2xl border border-slate-700 mb-8">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 text-slate-300">
@@ -374,6 +395,7 @@ export default function Earn({ user, onAuthClick }) {
     </div>
   );
 }
+
 
 // helpers
 function loadStoredData(key) {
